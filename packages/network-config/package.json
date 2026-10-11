@@ -1,0 +1,30 @@
+{
+  "name": "@universal-goods/network-config",
+  "version": "0.1.0",
+  "description": "Chain definitions, RPC endpoint handling and deployed contract addresses for the Universal Goods Protocol on LUKSO.",
+  "license": "Apache-2.0",
+  "private": false,
+  "type": "module",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest run"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "peerDependencies": {
+    "viem": "^2.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "viem": "^2.43.3",
+    "vitest": "^1.6.0",
+    "@types/node": "^20.11.0"
+  }
+}

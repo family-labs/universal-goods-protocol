@@ -1,0 +1,29 @@
+Universal Goods Protocol
+Copyright 2026 Family Labs Pty Ltd
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+It includes or is derived from the following third-party software, each under
+its own licence:
+
+- forge-std (contracts/lib/forge-std, and a copy inside contracts/lib/crypto-lib/lib)
+  Copyright Contributors to Forge Standard Library. MIT or Apache-2.0.
+
+- crypto-lib, "SCL" elliptic-curve library (contracts/lib/crypto-lib)
+  Copyright (c) 2024 Renaud Dubois. MIT. Audit reports by their authors are
+  included under contracts/lib/crypto-lib/doc.
+
+- OpenZeppelin Contracts (contracts/lib/openzeppelin-contracts/.../ECDSA.sol and
+  contracts/src/utils/MerkleProof.sol, vendored from v5.1.0)
+  Copyright (c) OpenZeppelin. MIT.
+
+- lukso-foundry-template (the original scaffold of contracts/)
+  Copyright LUKSO. Apache-2.0.
+
+- ethereum-lists/chains (packages/network-config/src/chains_mini.json, reduced to
+  chain name, chain id and short name). Under its own licence; see
+  https://github.com/ethereum-lists/chains.
+
+Solidity and TypeScript dependencies installed by package managers (LUKSO LSP
+contracts, ERC725, OpenZeppelin, ethers, viem and others) are not redistributed
+in this repository and remain under their own licences.

@@ -1,0 +1,15 @@
+{
+  "name": "universal-goods-protocol",
+  "private": true,
+  "license": "Apache-2.0",
+  "packageManager": "bun@1.4.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "bun run --filter './packages/network-config' build && bun run --filter './packages/lsp-utils' build",
+    "test": "bun run --filter './packages/*' test",
+    "contracts:build": "cd contracts && forge build",
+    "contracts:test": "cd contracts && forge test"
+  }
+}

@@ -1,0 +1,124 @@
+[profile.default]
+# "osaka" is required for the RIP-7212 / EIP-7951 P256VERIFY precompile at 0x100 to EXIST in the
+# test executor. Under "cancun" it does not, so no test could ever exercise a SUCCESSFUL P256
+# verification and the WebAuthn suite was structurally vacuous.
+# This does NOT change deployed artefacts: solc is pinned to 0.8.26, which predates Osaka, so
+# forge clamps solc's target and moves only the executor. Measured — WebAuthnController
+# deployedBytecode md5 is byte-identical under cancun and osaka (27e4aeb2455e3953d609390fca644894,
+# 11202 chars) and the full suite passes 104/104 under both.
+evm_version = "osaka"
+optimizer = true
+optimizer_runs = 200
+solc_version = "0.8.26"
+verbosity = 3
+src = "src"
+out = "out"
+libs = ["lib", "node_modules"]
+via_ir = true
+bytecode_hash = "none"
+cbor_metadata = false
+
+# Lets `PossessionProofClientFixture.t.sol` read the envelope bytes the TypeScript client
+# produced (contracts/test/fixtures/possession-proof.client.json). That test is the only
+# cross-implementation proof that the client and the contract agree byte for byte — without
+# file access it would have to re-derive the bytes in Solidity, which proves nothing.
+# READ ONLY, and scoped to the one fixture directory.
+fs_permissions = [{access = "read", path = "./test/fixtures"}]
+
+# THE VENDORED P-256 VERIFIER DOES NOT COMPILE UNDER `via_ir`. Measured: `forge build` fails with
+# "Yul exception: Cannot swap Variable usr_p with Variable _11: too deep in the stack by 36 slots"
+# inside SCL_mulmuladdX_fullgenW, reached from SCL_RIP7212.verify. crypto-lib's own foundry.toml
+# sets no `via_ir` at all (lib/crypto-lib/foundry.toml) — it is written for the LEGACY pipeline,
+# and this project turns via_ir on globally. Without a fix the pure-Solidity fallback cannot be
+# built at all, and the contract is limited to chains that have the RIP-7212 precompile — which
+# LUKSO mainnet does not.
+#
+# A restriction PROPAGATES UP THROUGH IMPORTS, because Foundry compiles a file together with its
+# imports. Scoping this to all of `lib/crypto-lib/src/**` therefore dragged WebAuthnController —
+# which imports `ec_isOnCurve` — into the legacy pipeline, where it failed its OWN stack-too-deep
+# at `executeUPViaKeyManager`. So the restriction names only the three files that genuinely need
+# it, and `SCL_ecOncurve` / `SCL_secp256r1` are deliberately NOT listed: they compile fine under
+# via_ir and are imported directly by WebAuthnController.
+[[profile.default.additional_compiler_profiles]]
+name = "crypto-lib-legacy"
+via_ir = false
+optimizer = true
+optimizer_runs = 1000000
+
+[[profile.default.compilation_restrictions]]
+paths = "lib/crypto-lib/src/lib/libSCL_RIP7212.sol"
+via_ir = false
+
+[[profile.default.compilation_restrictions]]
+paths = "lib/crypto-lib/src/elliptic/SCL_mulmuladdX_fullgenW.sol"
+via_ir = false
+
+[[profile.default.compilation_restrictions]]
+paths = "src/P256FallbackVerifier.sol"
+via_ir = false
+
+[[profile.default.compilation_restrictions]]
+paths = "test/P256Fallback.t.sol"
+via_ir = false
+
+# Imports DeployPasskeyAndV3Stack and DeployP256FallbackVerifier, both of which import P256FallbackVerifier.
+[[profile.default.compilation_restrictions]]
+paths = "test/DeployGateRefusals.t.sol"
+via_ir = false
+
+# Imports DeployPasskeyAndV3Stack, for the same reason.
+[[profile.default.compilation_restrictions]]
+paths = "test/DeployStackLiveRpc.t.sol"
+via_ir = false
+
+[fuzz] # Fuzzing configurations increased for more thorough testing
+runs = 20000
+dictionnary_weight = 60
+include_storage = true
+include_push_bytes = true
+show_logs = true
+
+[invariant] # Invariant configurations increased for more thorough testing
+runs = 20000
+call_override = true # useful for reentrancy checks
+dictionnary_weight = 80 # this is the default value
+
+[profile.ci]
+fuzz = { runs = 200000, dictionnary_weight = 100, include_storage = true, include_push_bytes = true, show_logs = true }
+invariant = { runs = 200000, depth = 5000, call_override = true, dictionnary_weight = 100, include_storage = true, include_push_bytes = true }
+
+
+[fmt]
+bracket_spacing = false
+int_types = "long"
+line_length = 100
+multiline_func_header = "attributes_first"
+number_underscore = "thousands"
+quote_style = "double"
+single_line_statement_blocks = "single"
+tab_width = 4
+wrap_comments = true
+
+# See more config options https://github.com/foundry-rs/foundry/tree/master/config
+remappings = [
+    "@/=node_modules/@",
+    "eth-gas-reporter/=node_modules/eth-gas-reporter/",
+    "forge-std/=lib/forge-std/src/",
+    "solidity-bytes-utils/=node_modules/solidity-bytes-utils/",
+    "ds-test/=lib/forge-std/lib/ds-test/src/",
+    "@openzeppelin/=node_modules/@openzeppelin/contracts/",
+    "@erc725/smart-contracts/=node_modules/@erc725/smart-contracts/contracts/",
+    "@lukso/lsp-smart-contracts/=node_modules/@lukso/lsp-smart-contracts/contracts/",
+    "@lukso/lsp1-contracts/=node_modules/@lukso/lsp1-contracts/contracts/",
+    "@lukso/lsp1delegate-contracts/=node_modules/@lukso/lsp1delegate-contracts/contracts/",
+    "@lukso/lsp20-contracts/=node_modules/@lukso/lsp20-contracts/contracts/",
+    "@lukso/lsp2-contracts/=node_modules/@lukso/lsp2-contracts/contracts/",
+    "@lukso/lsp4-contracts/=node_modules/@lukso/lsp4-contracts/contracts/",
+    "@lukso/lsp6-contracts/=node_modules/@lukso/lsp6-contracts/contracts/",
+    "@lukso/lsp7-contracts/=node_modules/@lukso/lsp7-contracts/contracts/",
+    "@lukso/lsp8-contracts/=node_modules/@lukso/lsp8-contracts/contracts/",
+    "@lukso/universalprofile-contracts/=node_modules/@lukso/universalprofile-contracts/contracts/",
+    # Optional: Use get-smooth/crypto-lib for P256 verification
+    "@get-smooth/crypto-lib/=lib/crypto-lib/src/",
+]
+# See more config options https://github.com/foundry-rs/foundry/blob/master/crates/config/README.md#all-options

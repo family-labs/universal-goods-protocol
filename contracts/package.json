@@ -1,0 +1,39 @@
+{
+  "name": "universal-goods-contracts",
+  "description": "Solidity contracts for the Universal Goods Protocol on LUKSO (Foundry project).",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test",
+    "format": "forge fmt",
+    "anvil": "anvil --port 8545 --hardfork osaka --silent",
+    "anvil:verbose": "anvil --port 8545 --hardfork osaka"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "dotenv": "^16.4.5"
+  },
+  "dependencies": {
+    "@erc725/erc725.js": "^0.28.2",
+    "@erc725/smart-contracts": "^7.0.0",
+    "@lukso/lsp-smart-contracts": "latest",
+    "@lukso/lsp1-contracts": "^0.15.5",
+    "@lukso/lsp1delegate-contracts": "^0.15.5",
+    "@lukso/lsp2-contracts": "latest",
+    "@lukso/lsp20-contracts": "^0.15.5",
+    "@lukso/lsp4-contracts": "latest",
+    "@lukso/lsp5-contracts": "^0.15.4",
+    "@lukso/lsp6-contracts": "^0.15.5",
+    "@lukso/lsp7-contracts": "^0.16.8",
+    "@lukso/lsp8-contracts": "latest",
+    "@lukso/universalprofile-contracts": "latest",
+    "@noble/curves": "^1.4.0",
+    "@openzeppelin/contracts": "^4.9.6",
+    "chai": "^4.3.7",
+    "ethers": "^6.8.0",
+    "mocha": "^10.2.0"
+  }
+}
