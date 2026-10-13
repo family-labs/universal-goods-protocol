@@ -1,0 +1,25 @@
+{
+  "name": "universal-goods-protocol-docs",
+  "version": "0.1.0",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "dev": "rspress dev",
+    "build": "rspress build",
+    "preview": "rspress preview",
+    "og": "bun scripts/generate-og-images.ts",
+    "check": "node scripts/check-build.mjs"
+  },
+  "dependencies": {
+    "@rspress/core": "^2.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.8.1",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "sharp": "^0.35.5"
+  }
+}

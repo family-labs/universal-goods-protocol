@@ -1,0 +1,20 @@
+[
+  { "type": "file", "name": "index", "label": "Contracts at a glance" },
+  { "type": "divider" },
+  { "type": "section-header", "label": "Contracts" },
+  { "type": "file", "name": "real-world-assets-v3", "label": "RealWorldAssetsV3" },
+  { "type": "file", "name": "factory", "label": "RealWorldAssetsV3Factory" },
+  { "type": "file", "name": "passkeys", "label": "Passkey contracts" },
+  { "type": "file", "name": "lsp11-recovery", "label": "LSP11 colleague recovery" },
+  { "type": "file", "name": "earlier-contracts", "label": "Earlier contracts" },
+  { "type": "divider" },
+  { "type": "section-header", "label": "Data and deployments" },
+  { "type": "file", "name": "addresses", "label": "Deployed addresses" },
+  { "type": "file", "name": "data-model", "label": "Data model and keys" },
+  { "type": "divider" },
+  { "type": "section-header", "label": "Packages" },
+  { "type": "file", "name": "lsp-utils", "label": "@universal-goods/lsp-utils" },
+  { "type": "file", "name": "network-config", "label": "@universal-goods/network-config" },
+  { "type": "divider" },
+  { "type": "file", "name": "security", "label": "Security model" }
+]

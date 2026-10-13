@@ -8,6 +8,7 @@ This repository holds the rails other people can build on: the Solidity contract
 
 - Live testnet app: https://app.universalgoods.xyz
 - Public passports (testnet): https://ugpdpp.xyz
+- Documentation: https://docs.universalgoods.org (source in [`docs/`](docs/))
 
 ## How the pieces fit
 
@@ -65,6 +66,7 @@ contracts/                 Foundry project
 packages/
   lsp-utils/               UPI tokenId derivation, LSP3 metadata, LSP6 permissions, LSP11 recovery
   network-config/          Chain definitions, RPC endpoint handling, deployed contract addresses
+docs/                      Documentation site (Rspress) for docs.universalgoods.org
 .github/workflows/ci.yml   Build and test on every push and pull request
 ```
 

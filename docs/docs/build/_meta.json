@@ -1,0 +1,6 @@
+[
+  { "type": "file", "name": "index", "label": "Start here" },
+  { "type": "file", "name": "contracts", "label": "Build and test the contracts" },
+  { "type": "file", "name": "packages", "label": "Use the packages" },
+  { "type": "file", "name": "verify-a-passport", "label": "Verify a passport yourself" }
+]

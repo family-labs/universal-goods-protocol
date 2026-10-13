@@ -20,7 +20,11 @@ jobs:
         with:
           persist-credentials: false
 
+      # Pinned: a newer forge resolves the nested node_modules imports of the LUKSO
+      # packages differently and fails to build them (LSP10Utils, IERC725Y type mismatch).
       - uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: v1.5.1
 
       - uses: oven-sh/setup-bun@v2
         with:
@@ -55,3 +59,27 @@ jobs:
 
       - name: Test
         run: bun run test
+
+  docs:
+    name: Documentation site (build and link check)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: docs
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.4.0
+
+      - name: Install
+        run: bun install --frozen-lockfile
+
+      - name: Build
+        run: bun run build
+
+      - name: Check for broken internal links and images
+        run: node scripts/check-build.mjs

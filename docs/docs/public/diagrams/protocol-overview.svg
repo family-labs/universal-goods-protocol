@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" width="960" height="560" role="img" aria-labelledby="t d">
+  <title id="t">How the Universal Goods Protocol fits together</title>
+  <desc id="d">An organisation's Universal Profile is controlled through its LSP6 Key Manager by a browser key, passkeys through signer proxies, and LSP11 recovery. The profile owns one RealWorldAssetsV3 collection per product line, deployed by the factory. Each token in a collection is one physical item, whose token ID is the keccak256 hash of the printed identifier. The profile also stores the Sync record for each published passport. A relayer submits signed transactions and pays the network fee.</desc>
+  <style>
+    .bg{fill:#F5F6FC}
+    .card{fill:#FFFFFF;stroke:#C4C6D0;stroke-width:1.2}
+    .key{fill:#EAF3FF;stroke:#0066CC;stroke-width:1.2}
+    .chain{fill:#FFFFFF;stroke:#0066CC;stroke-width:2}
+    .h{font:700 17px Helvetica,Arial,sans-serif;fill:#242424}
+    .t{font:400 13px Helvetica,Arial,sans-serif;fill:#242424}
+    .s{font:400 12px Helvetica,Arial,sans-serif;fill:#555555}
+    .m{font:400 12px Menlo,Consolas,monospace;fill:#0066CC}
+    .lbl{font:600 12px Helvetica,Arial,sans-serif;fill:#0066CC}
+    .ln{stroke:#0066CC;stroke-width:1.6;fill:none}
+    .dash{stroke:#555555;stroke-width:1.3;fill:none;stroke-dasharray:5 4}
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0066CC"/></marker>
+    <marker id="g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#555555"/></marker>
+  </defs>
+  <rect class="bg" width="960" height="560" rx="16"/>
+
+  <!-- controllers -->
+  <text class="lbl" x="40" y="44">WHO CAN ACT (LSP6 controllers)</text>
+  <rect class="key" x="40" y="58" width="250" height="58" rx="12"/>
+  <text class="t" x="56" y="82">Browser key</text>
+  <text class="s" x="56" y="101">secp256k1, kept in the browser</text>
+  <rect class="key" x="40" y="128" width="250" height="74" rx="12"/>
+  <text class="t" x="56" y="152">Passkeys</text>
+  <text class="s" x="56" y="171">WebAuthnController verifies;</text>
+  <text class="s" x="56" y="188">one WebAuthnSignerProxy each</text>
+  <rect class="key" x="40" y="214" width="250" height="58" rx="12"/>
+  <text class="t" x="56" y="238">LSP11 social recovery</text>
+  <text class="s" x="56" y="257">colleagues vote; ADDCONTROLLER only</text>
+
+  <!-- profile -->
+  <rect class="chain" x="360" y="58" width="290" height="214" rx="16"/>
+  <text class="h" x="380" y="88">Organisation profile</text>
+  <text class="s" x="380" y="108">Universal Profile (LSP0) + LSP6 Key Manager</text>
+  <text class="t" x="380" y="140">Public metadata (LSP3)</text>
+  <text class="t" x="380" y="164">Issued collections (LSP12)</text>
+  <text class="t" x="380" y="188">Sync records, one per published</text>
+  <text class="t" x="380" y="206">passport: a SHA-256 fingerprint</text>
+  <text class="s" x="380" y="232">Every action is a call the profile makes,</text>
+  <text class="s" x="380" y="250">checked against the caller's permissions.</text>
+
+  <path class="ln" d="M290 87 H350" marker-end="url(#a)"/>
+  <path class="ln" d="M290 165 H350" marker-end="url(#a)"/>
+  <path class="ln" d="M290 243 H350" marker-end="url(#a)"/>
+
+  <!-- relayer -->
+  <rect class="card" x="690" y="58" width="230" height="110" rx="12"/>
+  <text class="h" x="708" y="86">Relayer</text>
+  <text class="s" x="708" y="108">Submits the signed transaction</text>
+  <text class="s" x="708" y="126">and pays the network fee.</text>
+  <text class="s" x="708" y="148">It cannot sign for anyone.</text>
+  <path class="dash" d="M690 120 H660" marker-end="url(#g)"/>
+
+  <!-- factory -->
+  <rect class="card" x="690" y="196" width="230" height="76" rx="12"/>
+  <text class="h" x="708" y="224">V3 factory</text>
+  <text class="s" x="708" y="246">CREATE2, one collection per</text>
+  <text class="s" x="708" y="263">product line, idempotent</text>
+
+  <!-- collection -->
+  <rect class="chain" x="360" y="330" width="560" height="190" rx="16"/>
+  <text class="h" x="380" y="360">RealWorldAssetsV3 collection (LSP8, symbol "RWA")</text>
+  <text class="s" x="380" y="381">Owned by the organisation profile. Only the owner mints, and only to itself.</text>
+  <path class="ln" d="M495 272 V320" marker-end="url(#a)"/>
+  <text class="s" x="505" y="302">owns</text>
+  <path class="dash" d="M805 272 V320" marker-end="url(#g)"/>
+  <text class="s" x="815" y="302">deploys</text>
+
+  <rect class="card" x="380" y="398" width="160" height="104" rx="12"/>
+  <text class="t" x="396" y="422">Token = one item</text>
+  <text class="s" x="396" y="444">tokenId =</text>
+  <text class="m" x="396" y="462">keccak256(UPI)</text>
+  <text class="s" x="396" y="484">LSP8 hash format</text>
+  <rect class="card" x="556" y="398" width="170" height="104" rx="12"/>
+  <text class="t" x="572" y="422">Hand-over</text>
+  <text class="s" x="572" y="444">holder offers with</text>
+  <text class="m" x="572" y="462">authorizeOperator</text>
+  <text class="s" x="572" y="484">receiver pulls; UPI in data</text>
+  <rect class="card" x="742" y="398" width="160" height="104" rx="12"/>
+  <text class="t" x="758" y="422">Passport events</text>
+  <text class="s" x="758" y="444">hash + author only,</text>
+  <text class="s" x="758" y="462">by parties the owner</text>
+  <text class="s" x="758" y="480">authorises</text>
+
+  <!-- label -->
+  <rect class="card" x="40" y="330" width="250" height="190" rx="16"/>
+  <text class="h" x="58" y="360">The printed label</text>
+  <text class="s" x="58" y="384">GS1 Digital Link, the UPI:</text>
+  <text class="m" x="58" y="406">https://{host}/01/{gtin}</text>
+  <text class="m" x="58" y="424">  /21/{serial}</text>
+  <text class="s" x="58" y="452">Public. Hash it and you have</text>
+  <text class="s" x="58" y="470">the token ID: no lookup,</text>
+  <text class="s" x="58" y="488">no API call.</text>
+  <path class="ln" d="M290 450 H370" marker-end="url(#a)"/>
+</svg>

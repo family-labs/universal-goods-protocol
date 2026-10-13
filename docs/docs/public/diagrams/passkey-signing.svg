@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 300" width="960" height="300" role="img" aria-labelledby="t d">
+  <title id="t">How a passkey acts for a profile</title>
+  <desc id="d">The device signs a WebAuthn assertion whose challenge is the operation's own digest. Anyone may submit it. The credential's signer proxy asks WebAuthnController to verify the assertion; the controller checks the challenge, the P-256 signature through the precompile or the fallback verifier, and the per-credential nonce, and returns the payload. The proxy, which is the LSP6 controller, sends the payload to the profile's Key Manager, which checks the proxy's own permissions before the profile acts.</desc>
+  <style>
+    .bg{fill:#F5F6FC}
+    .card{fill:#FFFFFF;stroke:#C4C6D0;stroke-width:1.2}
+    .chain{fill:#FFFFFF;stroke:#0066CC;stroke-width:2}
+    .h{font:700 15px Helvetica,Arial,sans-serif;fill:#242424}
+    .s{font:400 12px Helvetica,Arial,sans-serif;fill:#555555}
+    .ln{stroke:#0066CC;stroke-width:1.6;fill:none}
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0066CC"/></marker></defs>
+  <rect class="bg" width="960" height="300" rx="16"/>
+
+  <rect class="card" x="30" y="50" width="160" height="150" rx="14"/>
+  <text class="h" x="46" y="78">Passkey</text>
+  <text class="s" x="46" y="100">Fingerprint, face or</text>
+  <text class="s" x="46" y="118">device PIN. Signs an</text>
+  <text class="s" x="46" y="136">assertion whose</text>
+  <text class="s" x="46" y="154">challenge is this</text>
+  <text class="s" x="46" y="172">operation's digest.</text>
+
+  <rect class="card" x="220" y="50" width="160" height="150" rx="14"/>
+  <text class="h" x="236" y="78">Anyone relays</text>
+  <text class="s" x="236" y="100">Usually the relayer.</text>
+  <text class="s" x="236" y="118">Relaying grants no</text>
+  <text class="s" x="236" y="136">authority: only the</text>
+  <text class="s" x="236" y="154">key holder can make</text>
+  <text class="s" x="236" y="172">an assertion.</text>
+
+  <rect class="chain" x="410" y="50" width="160" height="150" rx="14"/>
+  <text class="h" x="426" y="78">Signer proxy</text>
+  <text class="s" x="426" y="100">One per (profile,</text>
+  <text class="s" x="426" y="118">credential), at a</text>
+  <text class="s" x="426" y="136">CREATE2 address. It</text>
+  <text class="s" x="426" y="154">is the LSP6 controller,</text>
+  <text class="s" x="426" y="172">with its own bitmap.</text>
+
+  <rect class="chain" x="600" y="50" width="160" height="150" rx="14"/>
+  <text class="h" x="616" y="78">WebAuthn</text>
+  <text class="h" x="616" y="96">Controller</text>
+  <text class="s" x="616" y="118">Checks challenge,</text>
+  <text class="s" x="616" y="136">P-256 signature</text>
+  <text class="s" x="616" y="154">and nonce. Returns</text>
+  <text class="s" x="616" y="172">the payload.</text>
+
+  <rect class="chain" x="790" y="50" width="140" height="150" rx="14"/>
+  <text class="h" x="806" y="78">Key Manager</text>
+  <text class="s" x="806" y="100">Checks the proxy's</text>
+  <text class="s" x="806" y="118">own permissions,</text>
+  <text class="s" x="806" y="136">then the profile</text>
+  <text class="s" x="806" y="154">acts.</text>
+
+  <path class="ln" d="M190 125 H210" marker-end="url(#a)"/>
+  <path class="ln" d="M380 125 H400" marker-end="url(#a)"/>
+  <path class="ln" d="M570 100 H590" marker-end="url(#a)"/>
+  <path class="ln" d="M600 160 H580" marker-end="url(#a)"/>
+  <path class="ln" d="M490 200 V240 H860 V210" marker-end="url(#a)"/>
+  <text class="s" x="540" y="262">the proxy sends the payload to the Key Manager</text>
+</svg>

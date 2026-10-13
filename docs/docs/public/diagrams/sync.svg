@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" width="960" height="360" role="img" aria-labelledby="t d">
+  <title id="t">How Sync works</title>
+  <desc id="d">When an organisation publishes a passport, the hosted platform issues a signed credential describing the published sections. Its SHA-256 fingerprint is written by the organisation's Universal Profile, through a controller with SETDATA, to its own storage under a data key derived from the product. A verifier reads the fingerprint from the chain, hashes the credential, compares the two, and then compares the live passport data with the sections sealed in the credential.</desc>
+  <style>
+    .bg{fill:#F5F6FC}
+    .card{fill:#FFFFFF;stroke:#C4C6D0;stroke-width:1.2}
+    .chain{fill:#FFFFFF;stroke:#0066CC;stroke-width:2}
+    .ok{fill:#FFFFFF;stroke:#C4C6D0;stroke-width:1.2}
+    .h{font:700 16px Helvetica,Arial,sans-serif;fill:#242424}
+    .s{font:400 12px Helvetica,Arial,sans-serif;fill:#555555}
+    .m{font:400 11.5px Menlo,Consolas,monospace;fill:#0066CC}
+    .lbl{font:600 12px Helvetica,Arial,sans-serif;fill:#0066CC}
+    .ln{stroke:#0066CC;stroke-width:1.6;fill:none}
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0066CC"/></marker></defs>
+  <rect class="bg" width="960" height="360" rx="16"/>
+  <text class="lbl" x="40" y="40">PUBLISH</text>
+
+  <rect class="card" x="40" y="54" width="200" height="120" rx="14"/>
+  <text class="h" x="58" y="82">Passport data</text>
+  <text class="s" x="58" y="104">sections as published,</text>
+  <text class="s" x="58" y="122">each with its visibility</text>
+
+  <rect class="card" x="290" y="54" width="200" height="120" rx="14"/>
+  <text class="h" x="308" y="82">Credential</text>
+  <text class="s" x="308" y="104">SD-JWT issued by the</text>
+  <text class="s" x="308" y="122">hosted platform</text>
+  <text class="m" x="308" y="152">sha256(credential)</text>
+
+  <rect class="chain" x="540" y="54" width="380" height="120" rx="14"/>
+  <text class="h" x="558" y="82">Organisation profile (ERC725Y)</text>
+  <text class="s" x="558" y="104">setData by the profile, via a controller with SETDATA</text>
+  <text class="m" x="558" y="128">key   = keccak256("UG_VerifiableData_</text>
+  <text class="m" x="558" y="144">        product_" + productId)</text>
+  <text class="m" x="558" y="162">value = the 32-byte fingerprint</text>
+
+  <path class="ln" d="M240 114 H280" marker-end="url(#a)"/>
+  <path class="ln" d="M490 114 H530" marker-end="url(#a)"/>
+
+  <text class="lbl" x="40" y="214">VERIFY</text>
+  <rect class="ok" x="40" y="228" width="880" height="100" rx="14"/>
+  <text class="s" x="58" y="254">1. Read the fingerprint from the profile with getData(key). None there means nothing was published: unverified, not invalid.</text>
+  <text class="s" x="58" y="276">2. Hash the active credential and compare. A different value means the record does not match the credential: invalid.</text>
+  <text class="s" x="58" y="298">3. Compare the live passport data with the sections sealed in the credential. Values changed since publishing: invalid.</text>
+  <text class="s" x="58" y="318">A change of visibility alone is reported, not treated as tampering.</text>
+</svg>

@@ -1,0 +1,11 @@
+[
+  { "type": "file", "name": "index", "label": "Overview" },
+  { "type": "divider" },
+  { "type": "file", "name": "organisation", "label": "1. Set up an organisation" },
+  { "type": "file", "name": "product", "label": "2. Create a product" },
+  { "type": "file", "name": "supplier-data", "label": "3. Collect supplier data" },
+  { "type": "file", "name": "issue", "label": "4. Issue passports" },
+  { "type": "file", "name": "labels", "label": "5. Print labels" },
+  { "type": "file", "name": "share-verify", "label": "6. Share and verify" },
+  { "type": "file", "name": "partners", "label": "7. Hand passports to a partner" }
+]
