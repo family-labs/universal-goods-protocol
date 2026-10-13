@@ -1,0 +1,4 @@
+[
+  { "type": "file", "name": "index", "label": "The hosted platform" },
+  { "type": "file", "name": "api", "label": "API" }
+]

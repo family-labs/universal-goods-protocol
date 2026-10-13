@@ -1,0 +1,5 @@
+[
+  { "type": "file", "name": "faq", "label": "FAQ" },
+  { "type": "file", "name": "glossary", "label": "Glossary" },
+  { "type": "file", "name": "changelog", "label": "Changelog" }
+]

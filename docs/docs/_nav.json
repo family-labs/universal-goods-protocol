@@ -1,0 +1,8 @@
+[
+  { "text": "Overview", "link": "/overview/", "activeMatch": "/overview/" },
+  { "text": "How it comes together", "link": "/walkthrough/", "activeMatch": "/walkthrough/" },
+  { "text": "Reference", "link": "/reference/", "activeMatch": "/reference/" },
+  { "text": "Build on it", "link": "/build/", "activeMatch": "/build/" },
+  { "text": "Hosted platform", "link": "/platform/", "activeMatch": "/platform/" },
+  { "text": "FAQ", "link": "/learn/faq", "activeMatch": "/learn/" }
+]

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" width="960" height="400" role="img" aria-labelledby="t d">
+  <title id="t">A two-legged hand-over of one item</title>
+  <desc id="d">Leg one: the holder calls authorizeOperator on the collection with the receiver as operator, the token ID, and the printed identifier as notification data. Nothing moves; the receiver is notified through LSP1. Leg two: the receiver calls transfer from the holder to itself, with the same identifier as data. The collection checks that keccak256 of the data equals the token ID and that the caller is not the current holder, then moves the token. A holder calling transfer directly is refused.</desc>
+  <style>
+    .bg{fill:#F5F6FC}
+    .card{fill:#FFFFFF;stroke:#C4C6D0;stroke-width:1.2}
+    .chain{fill:#FFFFFF;stroke:#0066CC;stroke-width:2}
+    .no{fill:#FFF4E8;stroke:#F2A24A;stroke-width:1.2}
+    .h{font:700 17px Helvetica,Arial,sans-serif;fill:#242424}
+    .t{font:600 13px Helvetica,Arial,sans-serif;fill:#242424}
+    .s{font:400 12px Helvetica,Arial,sans-serif;fill:#555555}
+    .m{font:400 12px Menlo,Consolas,monospace;fill:#0066CC}
+    .lbl{font:600 12px Helvetica,Arial,sans-serif;fill:#0066CC}
+    .ln{stroke:#0066CC;stroke-width:1.6;fill:none}
+  </style>
+  <defs><marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#0066CC"/></marker></defs>
+  <rect class="bg" width="960" height="400" rx="16"/>
+
+  <rect class="card" x="40" y="40" width="200" height="110" rx="14"/>
+  <text class="h" x="58" y="70">Holder</text>
+  <text class="s" x="58" y="92">owns the token today</text>
+  <text class="s" x="58" y="112">(an organisation profile</text>
+  <text class="s" x="58" y="130">or a person's profile)</text>
+
+  <rect class="card" x="720" y="40" width="200" height="110" rx="14"/>
+  <text class="h" x="738" y="70">Receiver</text>
+  <text class="s" x="738" y="92">the next owner, which</text>
+  <text class="s" x="738" y="112">must also supply the</text>
+  <text class="s" x="738" y="130">printed identifier</text>
+
+  <rect class="chain" x="300" y="40" width="360" height="300" rx="16"/>
+  <text class="h" x="320" y="70">RealWorldAssetsV3 collection</text>
+
+  <text class="lbl" x="320" y="104">LEG 1, THE OFFER (signed by the holder)</text>
+  <text class="m" x="320" y="126">authorizeOperator(receiver,</text>
+  <text class="m" x="320" y="144">  tokenId, UPI bytes)</text>
+  <text class="s" x="320" y="166">Checks keccak256(UPI) == tokenId. Moves nothing.</text>
+  <text class="s" x="320" y="184">LSP1 notifies the receiver and hands it the UPI.</text>
+
+  <text class="lbl" x="320" y="222">LEG 2, THE PULL (signed by the receiver)</text>
+  <text class="m" x="320" y="244">transfer(holder, receiver,</text>
+  <text class="m" x="320" y="262">  tokenId, false, UPI bytes)</text>
+  <text class="s" x="320" y="284">Checks keccak256(UPI) == tokenId and that the</text>
+  <text class="s" x="320" y="302">caller is not the holder, then moves the token.</text>
+
+  <path class="ln" d="M240 120 H290" marker-end="url(#a)"/>
+  <path class="ln" d="M660 175 C690 175 700 160 730 152" marker-end="url(#a)"/>
+  <path class="ln" d="M820 150 V253 H670" marker-end="url(#a)"/>
+
+  <rect class="no" x="40" y="200" width="200" height="140" rx="14"/>
+  <text class="t" x="58" y="228">Refused on chain</text>
+  <text class="s" x="58" y="250">A holder calling transfer</text>
+  <text class="s" x="58" y="268">directly reverts with</text>
+  <text class="m" x="58" y="290">UG_DirectTransfer</text>
+  <text class="m" x="58" y="308">Refused_OfferWith</text>
+  <text class="m" x="58" y="326">AuthorizeOperator</text>
+
+  <text class="s" x="300" y="372">An offer withdrawn in an app stays live until revokeOperator is mined.</text>
+</svg>

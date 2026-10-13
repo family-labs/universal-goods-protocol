@@ -1,0 +1,1100 @@
+/* Universal Goods Protocol docs: Rspress brand overrides.
+   Palette: Ocean Blue, Ice White, Soft Black. Headings Sofia Sans, body Poppins. */
+
+@import url('https://fonts.googleapis.com/css2?family=Sofia+Sans:wght@400;600;700;800;900&family=Poppins:wght@400;500;600&display=swap');
+
+/* ── Brand palette ────────────────────────────────────────────── */
+:where(:root) {
+  --rp-c-brand: #0066CC;
+  --rp-c-brand-light: #0A84FF;
+  --rp-c-brand-lighter: #CCE4FF;
+  --rp-c-brand-dark: #004999;
+  --rp-c-brand-darker: #003366;
+  --rp-c-brand-tint: rgba(0, 102, 204, 0.16);
+
+  /* UG accent & elevation */
+  --ug-accent: #FF5588;
+  --ug-accent-tint: rgba(255, 85, 136, 0.12);
+  --ug-soft-black: #242424;
+  --ug-gray: #272727;
+  --ug-shadow-1: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --ug-shadow-2: 0 4px 16px rgba(0, 0, 0, 0.10);
+  --ug-shadow-3: 0 8px 32px rgba(0, 0, 0, 0.16);
+}
+
+/* ── Light mode ───────────────────────────────────────────────── */
+:where(html:not(.rp-dark)) {
+  --rp-c-bg: #F5F6FC;
+  --rp-c-bg-soft: #EDEEF5;
+  --rp-c-bg-mute: #E4E5EE;
+  --rp-c-bg-alt: #F5F6FC;
+  --rp-c-divider: rgba(116, 119, 127, 0.25);
+  --rp-c-divider-light: rgba(196, 198, 208, 0.5);
+  --rp-c-text-0: #242424;
+  --rp-c-text-1: #242424;
+  --rp-c-text-2: #555555;
+  --rp-c-text-3: rgba(85, 85, 85, 0.5);
+  --rp-c-text-4: rgba(85, 85, 85, 0.25);
+  --rp-c-text-code: #0066CC;
+  --rp-c-text-code-bg: rgba(10, 132, 255, 0.08);
+  --rp-c-text-code-border: rgba(196, 198, 208, 0.4);
+
+  /* Home page */
+  --rp-home-hero-secondary-color: #0066CC;
+  --rp-home-hero-title-color: #242424;
+  --rp-home-hero-title-bg: none;
+  --rp-home-background-bg:
+    radial-gradient(60% 60% at 100% 0%, rgba(10, 132, 255, 0.08) 0%, transparent 100%),
+    radial-gradient(50% 80% at 50% 0%, rgba(10, 132, 255, 0.05) 0%, transparent 100%),
+    #F5F6FC;
+  --rp-home-feature-bg: linear-gradient(135deg, #F5F6FC, rgba(237, 238, 245, 0.8));
+}
+
+/* ── Dark mode ────────────────────────────────────────────────── */
+:where(html.rp-dark) {
+  --rp-c-bg: #242424;
+  --rp-c-bg-soft: #272727;
+  --rp-c-bg-mute: #2E2E2E;
+  --rp-c-bg-alt: #1C1C1C;
+  --rp-c-divider: rgba(142, 144, 153, 0.4);
+  --rp-c-divider-light: rgba(68, 71, 78, 0.6);
+  --rp-c-text-0: #E2E2E9;
+  --rp-c-text-1: #E2E2E9;
+  --rp-c-text-2: #C4C6D0;
+  --rp-c-text-3: rgba(196, 198, 208, 0.5);
+  --rp-c-text-4: rgba(196, 198, 208, 0.25);
+  --rp-c-text-code: #3D9FFF;
+  --rp-c-text-code-bg: rgba(10, 132, 255, 0.15);
+  --rp-c-text-code-border: rgba(68, 71, 78, 0.5);
+
+  /* Home page */
+  --rp-home-hero-secondary-color: #3D9FFF;
+  --rp-home-hero-title-color: #E2E2E9;
+  --rp-home-hero-title-bg: none;
+  --rp-home-background-bg:
+    radial-gradient(42% 56% at 100% 0%, rgba(10, 132, 255, 0.12) 0%, transparent 100%),
+    radial-gradient(55% 88% at 48% 0%, rgba(36, 36, 36, 0.9) 0%, transparent 90%),
+    #242424;
+  --rp-home-feature-bg: linear-gradient(135deg, transparent, rgba(255, 255, 255, 0.03));
+}
+
+/* ── Typography ───────────────────────────────────────────────── */
+:root {
+  --rp-font-family-base: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+  --rp-font-family-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, 'Cascadia Code',
+    'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
+  --ug-font-heading: 'Sofia Sans', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  font-family: var(--rp-font-family-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'kern' 1, 'liga' 1;
+}
+
+/* ── Border radius ────────────────────────────────────────────── */
+:where(:root) {
+  --rp-radius: 16px;
+  --rp-radius-small: 8px;
+  --rp-radius-large: 24px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   NAVIGATION
+   ══════════════════════════════════════════════════════════════════ */
+
+.rp-nav {
+  backdrop-filter: blur(20px) saturate(180%);
+  height: 64px;
+}
+
+.rp-nav__title__link span {
+  font-family: var(--ug-font-heading);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: -0.01em;
+}
+
+.rp-nav__title__logo-image {
+  height: 28px;
+  width: auto;
+}
+
+.rp-nav-menu__item__container {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.rp-nav-menu__item--active .rp-nav-menu__item__container {
+  font-weight: 700;
+}
+
+/* Nav link to the hosted console (testnet) */
+.rp-nav a[href="https://app.universalgoods.xyz"] {
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  height: auto;
+  background: var(--rp-c-brand);
+  color: #fff !important;
+  font-family: var(--ug-font-heading);
+  font-weight: 600;
+  font-size: 0.8rem;
+  padding: 0.4rem 1rem;
+  border-radius: var(--rp-radius-small);
+  line-height: 1.4;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.rp-nav a[href="https://app.universalgoods.xyz"]:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(10, 132, 255, 0.3);
+  text-decoration: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SIDEBAR
+   ══════════════════════════════════════════════════════════════════ */
+
+.rp-sidebar {
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* Section headers — uppercase label */
+.rp-sidebar-section-header {
+  font-family: var(--ug-font-heading);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--rp-c-text-3);
+  margin-top: 0.75rem;
+  padding: 0.25rem 0.75rem;
+}
+
+/* Dividers — subtle */
+.rp-sidebar-divider {
+  margin: 0.5rem 0.75rem;
+  opacity: 0.5;
+}
+
+/* Active sidebar item */
+:where(html:not(.rp-dark)) .rp-sidebar-item--active {
+  background-color: rgba(10, 132, 255, 0.1);
+  color: #0066CC;
+  font-weight: 600;
+  border-radius: var(--rp-radius-small);
+}
+:where(html.rp-dark) .rp-sidebar-item--active {
+  background-color: rgba(10, 132, 255, 0.15);
+  color: #3D9FFF;
+  font-weight: 600;
+  border-radius: var(--rp-radius-small);
+}
+
+/* Tag badge (e.g. "NEW" on changelog) */
+.rp-sidebar-item .rp-tag {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: var(--rp-c-brand-tint);
+  color: var(--rp-c-brand);
+}
+:where(html.rp-dark) .rp-sidebar-item .rp-tag {
+  background: rgba(10, 132, 255, 0.15);
+  color: #3D9FFF;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   HOME PAGE — FULL-HEIGHT LAYOUT
+   ══════════════════════════════════════════════════════════════════ */
+
+#__rspress_root:has(.rp-home-hero) {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+#__rspress_root:has(.rp-home-hero) .rp-home-background {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+#__rspress_root:has(.rp-home-hero) .rp-home-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#__rspress_root:has(.rp-home-hero) .rp-home-footer {
+  margin-top: auto;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   HOME PAGE — HERO
+   ══════════════════════════════════════════════════════════════════ */
+
+.rp-home-hero {
+  padding: 1.5rem 1.5rem 1rem;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+/* Center all hero children (title, tagline, actions) */
+.rp-home-hero__container {
+  align-items: center !important;
+  text-align: center;
+}
+
+/* Hero image: above the title, 80% of title column width */
+.rp-home-hero__image {
+  order: -1 !important;
+  width: 80% !important;
+  max-width: 600px;
+  margin: 0 auto 0.75rem;
+  flex-shrink: 0;
+}
+
+.rp-home-hero__image img {
+  width: 100%;
+  height: auto;
+}
+
+@media (max-width: 768px) {
+  .rp-home-hero__image {
+    width: 95% !important;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.rp-home-hero__title {
+  font-family: var(--ug-font-heading);
+  font-size: 5rem;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  text-transform: none;
+  -webkit-text-fill-color: unset;
+  background-clip: unset;
+  -webkit-background-clip: unset;
+}
+
+/* The `text` frontmatter field maps to __subtitle in Rspress */
+.rp-home-hero__subtitle {
+  font-family: var(--ug-font-heading) !important;
+  font-size: 5rem !important;
+  font-weight: 900 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.05 !important;
+  color: var(--rp-c-text-1) !important;
+  -webkit-text-fill-color: var(--rp-c-text-1) !important;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  background-clip: unset !important;
+}
+
+@media (min-width: 769px) {
+  .rp-home-hero__subtitle {
+    font-size: 6rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .rp-home-hero__subtitle {
+    font-size: 3rem !important;
+  }
+}
+
+.rp-home-hero__tagline {
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--rp-c-text-3);
+  max-width: 520px;
+  margin: 0.5rem auto 0;
+}
+
+.rp-home-hero__actions {
+  margin-top: 1rem;
+  gap: 0.75rem;
+  justify-content: center !important;
+}
+
+/* Brand button */
+.rp-button--brand {
+  font-family: var(--ug-font-heading);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 12px 24px;
+  border-radius: var(--rp-radius-small);
+  background: #0066CC !important;
+  background-image: none !important;
+  color: #fff !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.rp-button--brand:hover {
+  transform: translateY(-1px);
+  background: #004999 !important;
+  box-shadow: 0 4px 16px rgba(0, 102, 204, 0.3);
+}
+
+/* Alt button */
+.rp-button--alt {
+  font-family: var(--ug-font-heading);
+  font-weight: 600;
+  padding: 12px 24px;
+  border-radius: var(--rp-radius-small);
+  border: 1px solid var(--rp-c-divider-light);
+  transition: border-color 0.15s ease;
+}
+.rp-button--alt:hover {
+  border-color: var(--rp-c-brand);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   HOME PAGE — FEATURES
+   ══════════════════════════════════════════════════════════════════ */
+
+.rp-home-feature {
+  padding: 0 1.5rem 1.5rem;
+  gap: 1rem;
+  max-width: 1152px;
+  margin: 0 auto;
+}
+
+.rp-home-feature__card {
+  padding: 1.5rem;
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: var(--rp-radius);
+  box-shadow: var(--ug-shadow-1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+  min-height: 0;
+}
+
+.rp-home-feature__card:hover {
+  transform: translateY(-3px);
+  border-color: var(--rp-c-brand-light);
+}
+:where(html:not(.rp-dark)) .rp-home-feature__card:hover {
+  box-shadow: 0 12px 32px rgba(10, 132, 255, 0.1);
+}
+:where(html.rp-dark) .rp-home-feature__card:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
+
+/* Feature icon */
+.rp-home-feature__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  margin-bottom: 0.75rem;
+  color: var(--rp-c-brand);
+}
+.rp-home-feature__icon svg {
+  width: 28px;
+  height: 28px;
+}
+:where(html:not(.rp-dark)) .rp-home-feature__icon {
+  background: rgba(10, 132, 255, 0.1);
+}
+:where(html.rp-dark) .rp-home-feature__icon {
+  background: rgba(10, 132, 255, 0.15);
+  color: #3D9FFF;
+}
+
+.rp-home-feature__title {
+  font-family: var(--ug-font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+.rp-home-feature__detail {
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--rp-c-text-2);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════════════════════════ */
+
+.rp-home-footer {
+  border-top: 1px solid var(--rp-c-divider-light);
+  padding: 0.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rp-home-footer__message {
+  font-size: 0.8rem;
+  color: var(--rp-c-text-3);
+  text-align: center;
+  width: 100%;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DOC CONTENT — TABLE OF CONTENTS
+   ══════════════════════════════════════════════════════════════════ */
+
+.rp-toc {
+  font-size: 0.8rem;
+}
+
+.rp-toc-item--active {
+  color: var(--rp-c-brand);
+  font-weight: 600;
+}
+
+:where(html.rp-dark) .rp-toc-item--active {
+  color: #3D9FFF;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DOC CONTENT — HEADINGS
+   ══════════════════════════════════════════════════════════════════ */
+
+.rspress-doc h1 {
+  font-family: var(--ug-font-heading);
+  font-size: 2rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 1rem;
+}
+
+.rspress-doc h2 {
+  font-family: var(--ug-font-heading);
+  font-size: 1.4rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  margin-top: 2.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rp-c-divider-light);
+}
+
+.rspress-doc h3 {
+  font-family: var(--ug-font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-top: 1.75rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DOC CONTENT — CODE BLOCKS
+   ══════════════════════════════════════════════════════════════════ */
+
+:where(html:not(.rp-dark)) {
+  --rp-code-title-bg: #E4E5EE;
+  --rp-code-block-bg: #EDEEF5;
+}
+:where(html.rp-dark) {
+  --rp-code-title-bg: #2E2E2E;
+  --rp-code-block-bg: #272727;
+}
+
+.rspress-doc pre {
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: var(--rp-radius);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DOC CONTENT — CALLOUTS (:::tip, :::warning, :::note)
+   ══════════════════════════════════════════════════════════════════ */
+
+.rspress-directive {
+  border-radius: var(--rp-radius);
+  padding: 1rem 1.25rem;
+  margin: 1.25rem 0;
+  border-left: 3px solid;
+  font-size: 0.9rem;
+  line-height: 1.65;
+}
+
+.rspress-directive .rspress-directive-title {
+  font-family: var(--ug-font-heading);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.4rem;
+}
+
+/* Tip */
+.rspress-directive-tip {
+  background: rgba(10, 132, 255, 0.08);
+  border-color: var(--rp-c-brand);
+}
+.rspress-directive-tip .rspress-directive-title {
+  color: var(--rp-c-brand);
+}
+:where(html.rp-dark) .rspress-directive-tip {
+  background: rgba(10, 132, 255, 0.12);
+  border-color: #3D9FFF;
+}
+:where(html.rp-dark) .rspress-directive-tip .rspress-directive-title {
+  color: #3D9FFF;
+}
+
+/* Warning */
+.rspress-directive-warning {
+  background: rgba(240, 173, 78, 0.1);
+  border-color: #D4920A;
+}
+.rspress-directive-warning .rspress-directive-title {
+  color: #9E6C00;
+}
+:where(html.rp-dark) .rspress-directive-warning {
+  background: rgba(240, 173, 78, 0.08);
+  border-color: #F0AD4E;
+}
+:where(html.rp-dark) .rspress-directive-warning .rspress-directive-title {
+  color: #F0AD4E;
+}
+
+/* Note / Info */
+.rspress-directive-note,
+.rspress-directive-info {
+  background: rgba(116, 119, 127, 0.06);
+  border-color: var(--rp-c-text-3);
+}
+.rspress-directive-note .rspress-directive-title,
+.rspress-directive-info .rspress-directive-title {
+  color: var(--rp-c-text-2);
+}
+:where(html.rp-dark) .rspress-directive-note,
+:where(html.rp-dark) .rspress-directive-info {
+  background: rgba(196, 198, 208, 0.06);
+}
+
+/* Danger */
+.rspress-directive-danger {
+  background: rgba(186, 26, 26, 0.06);
+  border-color: #BA1A1A;
+}
+.rspress-directive-danger .rspress-directive-title {
+  color: #BA1A1A;
+}
+:where(html.rp-dark) .rspress-directive-danger {
+  background: rgba(255, 180, 171, 0.08);
+  border-color: #FFB4AB;
+}
+:where(html.rp-dark) .rspress-directive-danger .rspress-directive-title {
+  color: #FFB4AB;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DOC CONTENT — TABLES
+   ══════════════════════════════════════════════════════════════════ */
+
+.rspress-doc table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  margin: 1rem 0;
+}
+
+.rspress-doc table th {
+  font-family: var(--ug-font-heading);
+  font-weight: 700;
+  text-align: left;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 2px solid var(--rp-c-divider);
+  color: var(--rp-c-text-1);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.rspress-doc table td {
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--rp-c-divider-light);
+}
+
+.rspress-doc table tr:last-child td {
+  border-bottom: none;
+}
+
+:where(html:not(.rp-dark)) .rspress-doc table tr:hover td {
+  background: rgba(10, 132, 255, 0.06);
+}
+:where(html.rp-dark) .rspress-doc table tr:hover td {
+  background: rgba(10, 132, 255, 0.08);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DOC CONTENT — IMAGES & FIGURES
+   ══════════════════════════════════════════════════════════════════ */
+
+.rspress-doc img {
+  border-radius: var(--rp-radius);
+  border: 1px solid var(--rp-c-divider-light);
+  margin: 1.25rem 0;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Cover images — full-width hero banners at the top of pages */
+.rspress-doc .cover-image {
+  margin: 0 0 2rem 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--rp-c-divider-light);
+  box-shadow: 0 4px 24px rgba(10, 132, 255, 0.08);
+  transition: box-shadow 0.2s ease;
+}
+:where(html.rp-dark) .rspress-doc .cover-image {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
+  border-color: rgba(196, 198, 208, 0.12);
+}
+.rspress-doc .cover-image img {
+  display: block;
+  width: 100%;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+
+/* Figure with caption — diagrams and helper illustrations */
+.rspress-doc figure {
+  margin: 2rem 0;
+  padding: 0;
+}
+.rspress-doc figure img {
+  display: block;
+  margin: 0 auto;
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: 12px;
+  box-shadow: 0 2px 16px rgba(10, 132, 255, 0.06);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.rspress-doc figure img:hover {
+  box-shadow: 0 4px 24px rgba(10, 132, 255, 0.1);
+  transform: translateY(-1px);
+}
+:where(html.rp-dark) .rspress-doc figure img {
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+  border-color: rgba(196, 198, 208, 0.12);
+}
+:where(html.rp-dark) .rspress-doc figure img:hover {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+.rspress-doc figcaption {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--rp-c-text-3);
+  margin-top: 0.75rem;
+  font-style: italic;
+  line-height: 1.5;
+}
+
+/* Diagram images — technical flow diagrams, centered */
+.rspress-doc .diagram {
+  margin: 2rem auto;
+  text-align: center;
+}
+.rspress-doc .diagram img {
+  max-width: 720px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--rp-c-divider-light);
+  box-shadow: 0 2px 16px rgba(10, 132, 255, 0.06);
+}
+:where(html.rp-dark) .rspress-doc .diagram img {
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.2);
+  border-color: rgba(196, 198, 208, 0.12);
+}
+
+/* Accent images — small decorative illustrations, inline or floated */
+.rspress-doc .accent-image {
+  margin: 1.5rem auto;
+  text-align: center;
+}
+.rspress-doc .accent-image img {
+  max-width: 380px;
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  margin: 0 auto;
+  opacity: 0.92;
+  transition: opacity 0.2s ease;
+}
+.rspress-doc .accent-image img:hover {
+  opacity: 1;
+}
+
+/* Screenshot images — platform UI screenshots */
+.rspress-doc .screenshot {
+  margin: 1.5rem 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--rp-c-divider-light);
+  box-shadow:
+    0 2px 8px rgba(10, 132, 255, 0.06),
+    0 0 0 1px rgba(10, 132, 255, 0.03);
+}
+.rspress-doc .screenshot img {
+  display: block;
+  width: 100%;
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+:where(html.rp-dark) .rspress-doc .screenshot {
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.25),
+    0 0 0 1px rgba(196, 198, 208, 0.08);
+  border-color: rgba(196, 198, 208, 0.12);
+}
+
+/* Side-by-side image grid */
+.rspress-doc .image-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin: 2rem 0;
+}
+.rspress-doc .image-grid img {
+  width: 100%;
+  margin: 0;
+  border-radius: 12px;
+  border: 1px solid var(--rp-c-divider-light);
+  box-shadow: 0 2px 12px rgba(10, 132, 255, 0.05);
+}
+@media (max-width: 640px) {
+  .rspress-doc .image-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PLATFORM FEATURE CARDS — hoverable cards with icons
+   ══════════════════════════════════════════════════════════════════ */
+
+.rspress-doc .platform-features {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin: 1.75rem 0 2.5rem;
+}
+@media (max-width: 840px) {
+  .rspress-doc .platform-features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 540px) {
+  .rspress-doc .platform-features {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rspress-doc .platform-features .feature-card {
+  position: relative;
+  background: var(--rp-c-bg-alt);
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  cursor: default;
+  overflow: hidden;
+}
+.rspress-doc .platform-features .feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--rp-c-brand), var(--rp-c-brand-light));
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.rspress-doc .platform-features .feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(10, 132, 255, 0.1);
+  border-color: var(--rp-c-brand-light);
+}
+.rspress-doc .platform-features .feature-card:hover::before {
+  opacity: 1;
+}
+:where(html.rp-dark) .rspress-doc .platform-features .feature-card {
+  background: #272727;
+  border-color: rgba(196, 198, 208, 0.12);
+}
+:where(html.rp-dark) .rspress-doc .platform-features .feature-card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border-color: rgba(10, 132, 255, 0.3);
+}
+:where(html.rp-dark) .rspress-doc .platform-features .feature-card::before {
+  background: linear-gradient(90deg, #3D9FFF, #0A84FF);
+}
+
+.rspress-doc .platform-features .feature-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+  background: var(--rp-c-brand-tint);
+}
+:where(html.rp-dark) .rspress-doc .platform-features .feature-icon {
+  background: rgba(10, 132, 255, 0.15);
+}
+.rspress-doc .platform-features .feature-icon svg {
+  width: 22px;
+  height: 22px;
+  color: var(--rp-c-brand);
+}
+:where(html.rp-dark) .rspress-doc .platform-features .feature-icon svg {
+  color: #3D9FFF;
+}
+
+.rspress-doc .platform-features .feature-card .feature-step {
+  display: inline-block;
+  font-family: var(--ug-font-heading);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--rp-c-brand);
+  margin-bottom: 0.35rem;
+}
+:where(html.rp-dark) .rspress-doc .platform-features .feature-card .feature-step {
+  color: #3D9FFF;
+}
+
+.rspress-doc .platform-features .feature-card h3 {
+  font-family: var(--ug-font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem 0;
+  padding: 0;
+  border: none;
+  color: var(--rp-c-text-1);
+  letter-spacing: -0.01em;
+}
+
+.rspress-doc .platform-features .feature-card p {
+  font-size: 0.82rem;
+  line-height: 1.6;
+  margin: 0;
+  color: var(--rp-c-text-2);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   AUDIENCE GRID — clickable cards linking to detail pages
+   ══════════════════════════════════════════════════════════════════ */
+
+.rspress-doc .audience-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.25rem;
+  margin: 1.75rem 0 2.5rem;
+}
+@media (max-width: 640px) {
+  .rspress-doc .audience-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.rspress-doc .audience-grid a.audience-card {
+  display: flex;
+  flex-direction: column;
+  background: var(--rp-c-bg-alt);
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: 14px;
+  padding: 1.75rem 1.5rem;
+  text-decoration: none !important;
+  color: inherit;
+  font-weight: inherit;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+.rspress-doc .audience-grid a.audience-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(10, 132, 255, 0.12);
+  border-color: var(--rp-c-brand);
+  text-decoration: none !important;
+}
+:where(html.rp-dark) .rspress-doc .audience-grid a.audience-card {
+  background: #272727;
+  border-color: rgba(196, 198, 208, 0.12);
+}
+:where(html.rp-dark) .rspress-doc .audience-grid a.audience-card:hover {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  border-color: rgba(10, 132, 255, 0.4);
+}
+
+.rspress-doc .audience-grid .audience-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+.rspress-doc .audience-grid .audience-icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.rspress-doc .audience-grid .audience-icon.brand-bg {
+  background: linear-gradient(135deg, #0A84FF, #0066CC);
+}
+.rspress-doc .audience-grid .audience-icon.consumer-bg {
+  background: linear-gradient(135deg, #3D9FFF, #0A84FF);
+}
+.rspress-doc .audience-grid .audience-icon.partner-bg {
+  background: linear-gradient(135deg, #FF5588, #CC3366);
+}
+.rspress-doc .audience-grid .audience-icon.developer-bg {
+  background: linear-gradient(135deg, #242424, #272727);
+}
+
+.rspress-doc .audience-grid .audience-card h3 {
+  font-family: var(--ug-font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin: 0 0 0.6rem 0;
+  padding: 0;
+  border: none;
+  color: var(--rp-c-text-1);
+}
+
+.rspress-doc .audience-grid .audience-card p {
+  font-size: 0.84rem;
+  line-height: 1.65;
+  margin: 0 0 1rem 0;
+  color: var(--rp-c-text-2);
+  flex: 1;
+}
+
+.rspress-doc .audience-grid .audience-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--rp-c-brand);
+  margin-top: auto;
+  transition: gap 0.2s ease;
+}
+:where(html.rp-dark) .rspress-doc .audience-grid .audience-link {
+  color: #3D9FFF;
+}
+.rspress-doc .audience-grid a.audience-card:hover .audience-link {
+  gap: 0.6rem;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   DOC CONTENT — LINKS
+   ══════════════════════════════════════════════════════════════════ */
+
+.rspress-doc a {
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.15s ease;
+}
+
+.rspress-doc a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   PREV / NEXT PAGE NAVIGATION
+   ══════════════════════════════════════════════════════════════════ */
+
+.rp-prev-next-page {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--rp-c-divider-light);
+}
+
+.rp-prev-next-page a {
+  border: 1px solid var(--rp-c-divider-light);
+  border-radius: var(--rp-radius);
+  padding: 1rem 1.25rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.rp-prev-next-page a:hover {
+  border-color: var(--rp-c-brand-light);
+  box-shadow: 0 2px 8px rgba(10, 132, 255, 0.08);
+}
+
+:where(html.rp-dark) .rp-prev-next-page a:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SEARCH
+   ══════════════════════════════════════════════════════════════════ */
+
+.rp-search-button {
+  border-radius: var(--rp-radius);
+  border: 1px solid var(--rp-c-divider-light);
+  transition: border-color 0.15s ease;
+}
+
+.rp-search-button:hover {
+  border-color: var(--rp-c-brand-light);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SCROLLBAR
+   ══════════════════════════════════════════════════════════════════ */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--rp-c-divider-light) transparent;
+}
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--rp-c-divider-light);
+  border-radius: 20px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--rp-c-brand);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   SCREENSHOT PLACEHOLDERS: a capture still to be taken.
+   Rendered as text, never as an image, so nothing shows broken.
+   ══════════════════════════════════════════════════════════════════ */
+.rspress-doc .todo-shot {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border: 1px dashed var(--rp-c-divider);
+  border-radius: 12px;
+  background: var(--rp-c-bg-soft);
+  color: var(--rp-c-text-2);
+  font-size: 0.9rem;
+  line-height: 1.55;
+}
+.rspress-doc .todo-shot strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  color: var(--rp-c-text-1);
+  font-family: var(--ug-font-heading);
+  letter-spacing: 0.02em;
+}

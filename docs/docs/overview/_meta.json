@@ -1,0 +1,13 @@
+[
+  { "type": "file", "name": "index", "label": "What the protocol is" },
+  { "type": "file", "name": "actors", "label": "Who takes part" },
+  { "type": "divider" },
+  { "type": "section-header", "label": "Concepts" },
+  { "type": "file", "name": "identities", "label": "Identities, keys and recovery" },
+  { "type": "file", "name": "products-and-items", "label": "Products, collections and items" },
+  { "type": "file", "name": "identifiers", "label": "The printed identifier" },
+  { "type": "file", "name": "passports", "label": "Passports and who sees what" },
+  { "type": "file", "name": "sync", "label": "Sync" },
+  { "type": "file", "name": "ownership", "label": "How ownership moves" },
+  { "type": "file", "name": "fees", "label": "Network fees and the relayer" }
+]
