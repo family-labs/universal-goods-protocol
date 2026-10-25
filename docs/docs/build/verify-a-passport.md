@@ -2,6 +2,8 @@
 
 This page shows how to check a passport against the chain, step by step, using only public data and a public RPC endpoint. It uses [`cast`](https://book.getfoundry.sh/cast/) from Foundry; a TypeScript version follows.
 
+For the reader's procedure, starting from the printed identifier alone, with the trust rule, the possible answers and mainnet examples, see [Verify a product passport](/verify/). This page goes further: it starts from a known organisation and also checks the [Sync](/overview/sync) record.
+
 What you need:
 
 - the item's **printed identifier** (scan the label);

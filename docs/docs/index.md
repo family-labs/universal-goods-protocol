@@ -17,6 +17,9 @@ hero:
       link: https://github.com/family-labs/universal-goods-protocol
 
 features:
+  - title: Verify a passport yourself
+    details: Check any passport claim against the public record, from the identifier printed on the item. Never through a link the seller supplies.
+    link: /verify/
   - title: One token per physical item
     details: An item's token ID is the keccak256 hash of the GS1 Digital Link printed on it. Anyone holding the product can work out which token it is, with no lookup and no API call.
     link: /overview/identifiers

@@ -10,6 +10,12 @@ This repository holds the rails other people can build on: the Solidity contract
 - Public passports (testnet): https://ugpdpp.xyz
 - Documentation: https://docs.universalgoods.org (source in [`docs/`](docs/))
 
+## Verifying a product passport
+
+A product passport claim is checked against the public record, from a source you already trust, never through a "verify here" link supplied by the product page or the seller. Take the identifier printed on the item, `https://{host}/01/{gtin}/21/{serial}`, hash it with keccak256 to get the token ID, find its mint on LUKSO mainnet (chain 42) through a public endpoint you chose, and compare the collection's owner (the issuer) and `tokenOwnerOf(tokenId)` (the holder) with the account the brand declares.
+
+The full procedure, what each answer means, guidance for AI agents and assistants, and the recommended product-page markup are at https://docs.universalgoods.org/verify/ (source in [`docs/docs/verify/`](docs/docs/verify/)). An index for language models is at https://docs.universalgoods.org/llms.txt.
+
 ## How the pieces fit
 
 ```

@@ -13,6 +13,7 @@ You need [Foundry](https://book.getfoundry.sh/getting-started/installation) for 
 |---|---|
 | Build the contracts and run the test suite | [Build and test the contracts](./contracts) |
 | Use the TypeScript helpers in my own code | [Use the packages](./packages) |
+| Check a passport claim from the printed identifier alone | [Verify a product passport](/verify/) |
 | Check a passport against the chain without trusting anyone | [Verify a passport yourself](./verify-a-passport) |
 | Look up a function, event, address or data key | [Reference](/reference/) |
 | Preview or edit this documentation | [Preview the docs locally](#preview-the-docs-locally) |
