@@ -39,6 +39,7 @@ node packages/verify/dist/cli.js "https://ugpdpp.org/01/2039492840945/21/000001"
 |---|---|
 | The printed identifier (UPI), a GS1 Digital Link with a serial | `https://ugpdpp.org/01/2039492840945/21/000001` |
 | A passport link or raw QR content of that form, with or without extra parameters | `https://ugpdpp.org/01/2039492840945/21/000001?linkType=all` |
+| A GS1 Digital Link on the brand's own domain or any other host | `https://brand.example/01/09520606000019/21/000001` |
 | A GS1 element string, as a barcode scanner returns it | `(01)02039492840945(21)000001` |
 | A direct ledger reference | `lukso:42:0x767244f34d4899b5e94309bdd718381816118ca5:0xd4cca9a2…` |
 | An explorer address for a token (only the two IDs are used) | `https://explorer.execution.mainnet.lukso.network/token/0x7672…/instance/d4cc…` |
@@ -46,6 +47,8 @@ node packages/verify/dist/cli.js "https://ugpdpp.org/01/2039492840945/21/000001"
 Optional: `issuerDomain`, the brand's website **as the caller already knows it**, and `network` (`mainnet` by default; identifiers on `ugpdpp.xyz` are read on testnet).
 
 The token ID is `keccak256` of the identifier's exact characters, computed by `itemTokenId` from [`@universal-goods/lsp-utils`](../lsp-utils/src/tokenid.ts), the protocol's one derivation. Characters inside the identifier are never changed. The tool removes only surrounding whitespace and anything after `?` or `#`, and says so in the result. A GS1 element string has no host, so the tool forms the identifier on the protocol's resolver host and says so.
+
+**A link on another host.** The protocol hashes the host into the token ID, but under GS1 Digital Link the GS1 key (01 + 21) is the identity and the host is only a resolver, so a brand may link to its passports from its own domain while the item was recorded under `ugpdpp.org`. A link on any host other than the protocol resolver is therefore looked up as written first, then as the same GTIN and serial under the resolver host (GTIN as given, as 14 and as 13 digits). `identifier.form` says which was found (`as-written` or `gs1-key-on-protocol-resolver`), `identifier.link` keeps the link as given, and the verdict names the mapping. The host of a mapped link was not part of what was checked, so its domain declaration is reported (`source: "link-host"`) and never confirms the brand or overrules the record.
 
 ## Output
 
@@ -93,7 +96,7 @@ The token ID is `keccak256` of the identifier's exact characters, computed by `i
 2. **Read each collection that minted it:** `owner()` (the issuer account), `tokenOwnerOf(tokenId)` (the holder), and its LSP4 name and symbol.
 3. **Ask who the brand is**, using UGP-1 draft section 9.4 domain declarations (`https://{domain}/.well-known/product-passports.json`) from domains that do not come from the page:
    - the `issuerDomain` the caller already knows;
-   - the identifier's own host, when it is not a shared protocol resolver (`ugpdpp.org`, `ugpdpp.xyz`). The host is part of the hashed identifier, so a copy on a lookalike domain is a different token;
+   - the identifier's own host, when it is not a shared protocol resolver (`ugpdpp.org`, `ugpdpp.xyz`) and the record was found under the identifier as written. The host is then part of the hashed identifier, so a copy on a lookalike domain is a different token;
    - otherwise, websites listed in the issuer account's own LSP3 profile, whose declaration must name the account back (a two-way link). Links to the Universal Goods platform's own pages are not treated as the brand's website. A profile whose content does not match the fingerprint recorded on the ledger is not used.
    A declaration must be served by the domain it speaks for (no redirect to another host) and must be for the same chain.
 4. **Choose:** the collection owned by the declared account; or the only one, when there is one and no declaration (reported as `confirmed: false`); otherwise `issuer-mismatch`. Anyone can mint the hash of any identifier into a collection of their own, so a record from an undeclared account is never reported as `verified` when the brand has declared another.
