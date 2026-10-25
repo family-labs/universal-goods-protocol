@@ -67,6 +67,7 @@ packages/
   lsp-utils/               UPI tokenId derivation, LSP3 metadata, LSP6 permissions, LSP11 recovery
   network-config/          Chain definitions, RPC endpoint handling, deployed contract addresses
 docs/                      Documentation site (Rspress) for docs.universalgoods.org
+marketplace/               Open public read API for marketplace listings: OpenAPI 3.1, listing JSON Schema
 .github/workflows/ci.yml   Build and test on every push and pull request
 ```
 
