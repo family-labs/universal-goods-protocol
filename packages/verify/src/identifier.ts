@@ -13,16 +13,33 @@ import type { NetworkKey } from './types.js';
  *
  * The token ID is derived by `itemTokenId` from `@universal-goods/lsp-utils`, the protocol's
  * one derivation, so this package cannot drift from what issuers mint.
+ *
+ * ONE KEY, TWO HOSTS. The protocol hashes the identifier with its host (UGP-1 3.4), so
+ * `https://brand.example/01/…/21/…` and `https://ugpdpp.org/01/…/21/…` are different tokens.
+ * Under GS1 Digital Link they name the same item: the GS1 key (01 + 21) is the identity and the
+ * host is only a resolver, so a brand may well link to its passports from its own domain. A link
+ * on any other host is therefore looked up as written first, and then as the same GS1 key under
+ * the protocol's resolver host, where the hosted platform mints. Only the as-written form makes
+ * the link's host part of what was checked; a mapped link's host is the page's word and nothing more.
  */
+
+/** How an identifier to look up was obtained from the input. */
+export type UpiForm =
+  /** Exactly the characters given: the host is part of the hashed identifier. */
+  | 'as-written'
+  /** The input's GS1 key (01 + 21) under the protocol's resolver host. */
+  | 'gs1-key-on-protocol-resolver';
 
 export interface UpiInput {
   ok: true;
   kind: 'upi';
   /**
-   * Identifiers to look up, most likely first. One, except for a GS1 element string, whose
-   * GTIN may have been printed in 13- or 14-digit form.
+   * Identifiers to look up, in order of preference: the input as written, then its GS1 key
+   * under the protocol's resolver host, with the GTIN in each length it may have been printed in.
    */
-  upis: { upi: string; tokenId: `0x${string}` }[];
+  upis: { upi: string; tokenId: `0x${string}`; form: UpiForm }[];
+  /** The web address as given, when it is on a host other than the protocol's resolver. */
+  link: string | null;
   gtin: string;
   serial: string;
   host: string;
@@ -94,7 +111,7 @@ export function parseInput(raw: string, network?: NetworkKey): ParsedInput {
   }
 
   if (/^https?:\/\//i.test(input)) {
-    return fromUrl(input, ignored, notes);
+    return fromUrl(input, network ?? 'mainnet', ignored, notes);
   }
 
   return {
@@ -106,7 +123,7 @@ export function parseInput(raw: string, network?: NetworkKey): ParsedInput {
   };
 }
 
-function fromUrl(input: string, ignored: string[], notes: string[]): ParsedInput {
+function fromUrl(input: string, fallbackNetwork: NetworkKey, ignored: string[], notes: string[]): ParsedInput {
   // Cut at the first `?` or `#` by string position. `new URL()` would lower-case the host and
   // re-encode the path, and the token ID is a hash of the characters exactly as printed.
   const cut = input.search(/[?#]/);
@@ -190,7 +207,24 @@ function fromUrl(input: string, ignored: string[], notes: string[]): ParsedInput
   const [, gtin, serial] = /\/01\/(\d+)\/21\/([^/]+)$/.exec(path)!;
   const network =
     host === NETWORKS.mainnet.resolverHost ? 'mainnet' : host === NETWORKS.testnet.resolverHost ? 'testnet' : null;
-  return { ok: true, kind: 'upi', upis: [{ upi: base, tokenId }], gtin, serial, host, network, ignored, notes };
+  const upis: UpiInput['upis'] = [{ upi: base, tokenId, form: 'as-written' }];
+  if (network === null) {
+    const resolver = NETWORKS[fallbackNetwork].resolverHost;
+    for (const g of gtinForms(gtin)) {
+      const upi = `https://${resolver}/01/${g}/21/${serial}`;
+      upis.push({ upi, tokenId: itemTokenId(upi), form: 'gs1-key-on-protocol-resolver' });
+    }
+  }
+  return { ok: true, kind: 'upi', upis, link: network === null ? base : null, gtin, serial, host, network, ignored, notes };
+}
+
+/**
+ * The lengths a GTIN may be printed in within an identifier: as given, as GTIN-14, and as
+ * GTIN-14 without its leading zero (the hosted platform prints 13 digits where the GTIN has them).
+ */
+function gtinForms(gtin: string): string[] {
+  const g14 = gtin.padStart(14, '0');
+  return [...new Set([gtin, g14, g14.startsWith('0') ? g14.slice(1) : g14])];
 }
 
 function fromElementString(
@@ -201,16 +235,14 @@ function fromElementString(
   notes: string[],
 ): ParsedInput {
   const host = NETWORKS[network].resolverHost;
-  // The printed identifier may carry the GTIN as 14 digits, or with the leading zero dropped.
-  const gtins = gtin14.startsWith('0') ? [gtin14, gtin14.slice(1)] : [gtin14];
-  const upis = gtins.map((g) => {
+  const upis = gtinForms(gtin14).map((g) => {
     const upi = `https://${host}/01/${g}/21/${serial}`;
-    return { upi, tokenId: itemTokenId(upi) };
+    return { upi, tokenId: itemTokenId(upi), form: 'gs1-key-on-protocol-resolver' as const };
   });
   notes.push(
     `The input was a GS1 element string with no web address, so the identifier was formed on the protocol's resolver host, ${host}. An item printed with a brand's own domain has a different identifier; scan the item's QR code to be sure.`,
   );
-  return { ok: true, kind: 'upi', upis, gtin: gtin14, serial, host, network, ignored, notes };
+  return { ok: true, kind: 'upi', upis, link: null, gtin: gtin14, serial, host, network, ignored, notes };
 }
 
 function invalid(reason: string, ignored: string[], notes: string[]): InvalidInput {

@@ -54,6 +54,34 @@ describe.runIf(live)('live: LUKSO mainnet', () => {
     expect(r.issuer?.profileName).toBe('Oskvale');
   });
 
+  it('verified: the same item from a link on the brand domain, looked up by its GS1 key', async () => {
+    const r = await verifyPassport('https://oskvale.com/01/09520606000019/21/000001');
+    expect(r.status).toBe('verified');
+    expect(r.identifier).toMatchObject({
+      upi: 'https://ugpdpp.org/01/09520606000019/21/000001',
+      form: 'gs1-key-on-protocol-resolver',
+      link: 'https://oskvale.com/01/09520606000019/21/000001',
+    });
+    expect(r.issuer?.account).toBe(FICTIONAL_BRAND_ACCOUNT);
+    console.log(r.verdict);
+  });
+
+  it('verified: and from a link on an unrelated host', async () => {
+    const r = await verifyPassport('https://passportrecord.org/01/09520606000019/21/000001');
+    expect(r.status).toBe('verified');
+  });
+
+  it('no-record: an unknown GTIN on the brand domain', async () => {
+    const r = await verifyPassport('https://oskvale.com/01/09520606000040/21/000001');
+    expect(r.status).toBe('no-record');
+    console.log(r.verdict);
+  });
+
+  it('invalid-identifier: a key buried in a lookalike path', async () => {
+    const r = await verifyPassport('https://oskvale-store.com/verify/01/09520606000019/21/000001');
+    expect(r.status).toBe('invalid-identifier');
+  });
+
   it('no-record: a fictional brand GTIN that was never issued', async () => {
     const r = await verifyPassport('https://ugpdpp.org/01/09520606000040/21/000001');
     expect(r.status).toBe('no-record');

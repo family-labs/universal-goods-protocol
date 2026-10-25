@@ -228,6 +228,75 @@ describe('verifyPassport', () => {
   });
 });
 
+describe('verifyPassport: a link on the brand domain or any other host', () => {
+  // The hosted platform minted the item under the protocol's resolver host...
+  const RESOLVER_UPI = 'https://ugpdpp.org/01/09520606000019/21/000001';
+  const RESOLVER_TOKEN = keccak256(toUtf8Bytes(RESOLVER_UPI));
+  // ...and the brand links to it from its own domain.
+  const BRAND_LINK = 'https://brand.example/01/09520606000019/21/000001';
+  const minted = (): FakeWorld['collections'][number] => ({ address: COLLECTION, owner: BRAND, holders: { [RESOLVER_TOKEN]: BRAND } });
+
+  it('verified: finds the record under the GS1 key on the protocol resolver host, and says so', async () => {
+    const { r } = await run(BRAND_LINK, { collections: [minted()] });
+    expect(r.status).toBe('verified');
+    expect(r.identifier).toMatchObject({ upi: RESOLVER_UPI, form: 'gs1-key-on-protocol-resolver', link: BRAND_LINK, tokenId: RESOLVER_TOKEN });
+    expect(r.verdict).toContain(`"${RESOLVER_UPI}" (the protocol identifier for the GS1 key in the link ${BRAND_LINK})`);
+    expect(r.notes.join(' ')).toContain('was not part of the identifier checked');
+  });
+
+  it('the same on any other host: a genuine item is never reported missing because of where the link lives', async () => {
+    const { r } = await run('https://passport-record.example/01/09520606000019/21/000001', { collections: [minted()] });
+    expect(r.status).toBe('verified');
+  });
+
+  it("a mapped link's host does not confirm the brand, even when its declaration names the issuer", async () => {
+    const { r } = await run(BRAND_LINK, { collections: [minted()], web: { [DECLARATION_URL]: declaration({ account: BRAND }) } });
+    expect(r.status).toBe('verified');
+    expect(r.issuer?.confirmed).toBe(false);
+    expect(r.declarations).toContainEqual(expect.objectContaining({ source: 'link-host', result: 'confirms' }));
+    expect(r.notes.join(' ')).toContain('does not confirm the brand');
+  });
+
+  it("a mapped link's host cannot overrule the record either", async () => {
+    const { r } = await run(BRAND_LINK, { collections: [minted()], web: { [DECLARATION_URL]: declaration({ account: FORGER }) } });
+    expect(r.status).toBe('verified');
+    expect(r.declarations).toContainEqual(expect.objectContaining({ source: 'link-host', result: 'contradicts' }));
+    expect(r.notes.join(' ')).toContain("the link's host is not the issuer");
+  });
+
+  it('confirmed when the caller names the brand website independently', async () => {
+    const { r } = await run(BRAND_LINK, { collections: [minted()], web: { [DECLARATION_URL]: declaration({ account: BRAND }) } }, { issuerDomain: 'brand.example' });
+    expect(r.issuer).toMatchObject({ confirmed: true, websiteSource: 'domain-declaration' });
+    expect(r.declarations[0].source).toBe('caller');
+  });
+
+  it('prefers the identifier as written when the brand minted under its own domain', async () => {
+    const { r } = await run(BRAND_LINK, {
+      collections: [
+        { address: COLLECTION, owner: BRAND, holders: { [keccak256(toUtf8Bytes(BRAND_LINK))]: BRAND } },
+        { address: COPY, owner: FORGER, holders: { [RESOLVER_TOKEN]: FORGER } },
+      ],
+      web: { [DECLARATION_URL]: declaration({ account: BRAND }) },
+    });
+    expect(r.status).toBe('verified');
+    expect(r.identifier).toMatchObject({ upi: BRAND_LINK, form: 'as-written' });
+    expect(r.issuer?.declaration).toMatchObject({ source: 'identifier-host', result: 'confirms' });
+  });
+
+  it('no-record: an unknown GTIN on the brand domain, checked both ways', async () => {
+    const { r } = await run('https://brand.example/01/09520606000040/21/000001', { collections: [minted()] });
+    expect(r.status).toBe('no-record');
+    expect(r.verdict).toContain('either as written or under its GS1 key');
+    expect(r.verdict).toContain('https://ugpdpp.org/01/09520606000040/21/000001');
+  });
+
+  it('invalid-identifier: a key buried in another path', async () => {
+    const { r, requests } = await run('https://brand-store.example/verify/01/09520606000019/21/000001', { collections: [minted()] });
+    expect(r.status).toBe('invalid-identifier');
+    expect(requests).toEqual([]);
+  });
+});
+
 describe('createFetchHandler', () => {
   const world: FakeWorld = { collections: [genuine()] };
 

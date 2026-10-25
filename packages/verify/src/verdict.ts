@@ -19,6 +19,10 @@ export interface VerdictFacts {
   /** For issuer-mismatch: the domain whose declared account did not issue any record. */
   declaringDomain?: string | null;
   candidateCount?: number;
+  /** The link as given, when the record was found under its GS1 key on the protocol's resolver host. */
+  mappedFrom?: string | null;
+  /** For no-record: the other forms of the identifier that were also looked up. */
+  alsoChecked?: string[];
 }
 
 /** Who issued the record, and a caveat when that is not confirmed by the brand's website. */
@@ -35,7 +39,11 @@ export function describeIssuer(issuer: IssuerInfo): { who: string; caveat: strin
 }
 
 export function writeVerdict(f: VerdictFacts): string {
-  const subject = f.subject ? `"${f.subject}"` : 'this item';
+  const subject = !f.subject
+    ? 'this item'
+    : f.mappedFrom
+      ? `"${f.subject}" (the protocol identifier for the GS1 key in the link ${f.mappedFrom})`
+      : `"${f.subject}"`;
   const issuer = f.issuer ? describeIssuer(f.issuer) : { who: 'an unknown account', caveat: '' };
   switch (f.status) {
     case 'verified':
@@ -47,7 +55,9 @@ export function writeVerdict(f: VerdictFacts): string {
         ? `A record for ${subject} exists on the public ${f.networkName} ledger, but it was not issued by the account ${f.declaringDomain} declares, so the passport claim is unconfirmed and may be a copy.`
         : `${f.candidateCount ?? 'Several'} different accounts have each recorded ${subject} on the public ${f.networkName} ledger and nothing shows which is the brand's, so the passport claim is unconfirmed.`;
     case 'no-record':
-      return `There is no passport record for ${subject} on the public ${f.networkName} ledger, so any passport claim for it is unsupported.`;
+      return f.alsoChecked?.length
+        ? `There is no passport record for ${subject} on the public ${f.networkName} ledger, either as written or under its GS1 key on the protocol's resolver host ("${f.alsoChecked[0]}"), so any passport claim for it is unsupported.`
+        : `There is no passport record for ${subject} on the public ${f.networkName} ledger, so any passport claim for it is unsupported.`;
     case 'unreachable':
       return `The public ${f.networkName} ledger could not be reached, so the passport claim could not be checked; this says nothing either way.`;
     case 'invalid-identifier':

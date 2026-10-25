@@ -13,7 +13,8 @@ const VECTORS: [string, string][] = [
 describe('parseInput: printed identifiers', () => {
   it.each(VECTORS)('derives the UGP-1 token ID for %s', (upi, tokenId) => {
     const p = parseInput(upi);
-    expect(p.ok && p.kind === 'upi' && p.upis).toEqual([{ upi, tokenId }]);
+    expect(p.ok && p.kind === 'upi' && p.upis).toEqual([{ upi, tokenId, form: 'as-written' }]);
+    expect(p.ok && p.kind === 'upi' && p.link).toBeNull();
   });
 
   it('reads gtin, serial, host, and the network the protocol resolver implies', () => {
@@ -52,6 +53,40 @@ describe('parseInput: printed identifiers', () => {
     const upper = parseInput('https://ugpdpp.org/01/07090055120115/21/00000A');
     const lower = parseInput('https://ugpdpp.org/01/07090055120115/21/00000a');
     expect(upper.ok && upper.kind === 'upi' && upper.upis[0].tokenId).not.toBe(lower.ok && lower.kind === 'upi' && lower.upis[0].tokenId);
+  });
+});
+
+describe('parseInput: a GS1 Digital Link on another host', () => {
+  it('looks the link up as written first, then as its GS1 key under the protocol resolver host', () => {
+    const p = parseInput('https://brand.example/01/09520606000019/21/000001');
+    expect(p.ok && p.kind === 'upi' && p.link).toBe('https://brand.example/01/09520606000019/21/000001');
+    expect(p.ok && p.kind === 'upi' && p.upis.map((u) => [u.form, u.upi])).toEqual([
+      ['as-written', 'https://brand.example/01/09520606000019/21/000001'],
+      ['gs1-key-on-protocol-resolver', 'https://ugpdpp.org/01/09520606000019/21/000001'],
+      ['gs1-key-on-protocol-resolver', 'https://ugpdpp.org/01/9520606000019/21/000001'],
+    ]);
+  });
+
+  it('tries the GTIN in the lengths it may have been printed in', () => {
+    const p = parseInput('https://brand.example/01/2039492840945/21/000001');
+    expect(p.ok && p.kind === 'upi' && p.upis.slice(1).map((u) => u.upi)).toEqual([
+      'https://ugpdpp.org/01/2039492840945/21/000001',
+      'https://ugpdpp.org/01/02039492840945/21/000001',
+    ]);
+  });
+
+  it('uses the testnet resolver when asked for testnet', () => {
+    const p = parseInput('https://brand.example/01/09520606000019/21/000001', 'testnet');
+    expect(p.ok && p.kind === 'upi' && p.upis[1].upi).toBe('https://ugpdpp.xyz/01/09520606000019/21/000001');
+  });
+
+  it('adds nothing for an identifier already on the protocol resolver', () => {
+    const p = parseInput('https://ugpdpp.org/01/09520606000019/21/000001');
+    expect(p.ok && p.kind === 'upi' && p.upis).toHaveLength(1);
+  });
+
+  it('still refuses a key buried in some other path', () => {
+    expect(parseInput('https://brand-store.example/verify/01/09520606000019/21/000001').ok).toBe(false);
   });
 });
 

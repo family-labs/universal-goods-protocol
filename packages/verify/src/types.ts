@@ -43,8 +43,13 @@ export type DeclarationResult =
 export interface DeclarationCheck {
   domain: string;
   url: string;
-  /** Why this domain was consulted. None of these is the page being checked. */
-  source: 'caller' | 'identifier-host' | 'issuer-profile';
+  /**
+   * Why this domain was consulted. `caller`, `identifier-host` (the host is part of the hashed
+   * identifier) and `issuer-profile` can decide who the brand is. `link-host` is the host of a link
+   * whose GS1 key was looked up under the protocol's resolver: that host was not part of what was
+   * checked, so its declaration is reported and never decides anything.
+   */
+  source: 'caller' | 'identifier-host' | 'issuer-profile' | 'link-host';
   result: DeclarationResult;
   /** The account the file declares, when it declares one. */
   declaredAccount: string | null;
@@ -85,6 +90,13 @@ export interface VerifyResult {
     kind: 'upi' | 'token-reference' | null;
     /** The item's Unique Product Identifier, exactly as hashed. */
     upi: string | null;
+    /**
+     * `as-written` when `upi` is the input itself; `gs1-key-on-protocol-resolver` when it is the
+     * input's GS1 key (01 + 21) under the protocol's resolver host, as for a link on a brand's own domain.
+     */
+    form: 'as-written' | 'gs1-key-on-protocol-resolver' | null;
+    /** The web address as given, when it is on a host other than the protocol's resolver. */
+    link: string | null;
     gtin: string | null;
     serial: string | null;
     tokenId: string | null;

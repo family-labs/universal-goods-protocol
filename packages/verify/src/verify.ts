@@ -33,6 +33,8 @@ export async function verifyPassport(input: string, options: VerifyOptions = {})
       input: String(input ?? ''),
       kind: parsed.ok ? parsed.kind : null,
       upi: parsed.ok && parsed.kind === 'upi' ? parsed.upis[0].upi : null,
+      form: parsed.ok && parsed.kind === 'upi' ? parsed.upis[0].form : null,
+      link: parsed.ok && parsed.kind === 'upi' ? parsed.link : null,
       gtin: parsed.ok && parsed.kind === 'upi' ? parsed.gtin : null,
       serial: parsed.ok && parsed.kind === 'upi' ? parsed.serial : null,
       tokenId: parsed.ok ? (parsed.kind === 'upi' ? parsed.upis[0].tokenId : parsed.tokenId) : null,
@@ -60,6 +62,11 @@ export async function verifyPassport(input: string, options: VerifyOptions = {})
       issuer: result.issuer,
       holder: result.holder,
       candidateCount: result.candidates.length,
+      mappedFrom: result.identifier.form === 'gs1-key-on-protocol-resolver' ? result.identifier.link : null,
+      alsoChecked:
+        status === 'no-record' && parsed.ok && parsed.kind === 'upi' && parsed.link
+          ? parsed.upis.filter((u) => u.form !== 'as-written').map((u) => u.upi)
+          : [],
       ...extra,
     });
     return result;
@@ -84,8 +91,15 @@ export async function verifyPassport(input: string, options: VerifyOptions = {})
     if (parsed.kind === 'upi') {
       const { logs } = await findMints(client, parsed.upis.map((u) => u.tokenId));
       if (logs.length === 0) return finish('no-record');
+      // Preference follows `parsed.upis`: the input as written beats its GS1 key on the resolver host.
       const matched = parsed.upis.find((u) => logs.some((l) => l.tokenId === u.tokenId.toLowerCase())) ?? parsed.upis[0];
       result.identifier.upi = matched.upi;
+      result.identifier.form = matched.form;
+      if (matched.form === 'gs1-key-on-protocol-resolver' && parsed.link) {
+        result.notes.push(
+          `No record exists for ${parsed.link} as written, so its GS1 key (01 ${parsed.gtin}, 21 ${parsed.serial}) was looked up under the protocol's resolver host as ${matched.upi}. The link's host, ${parsed.host}, was not part of the identifier checked.`,
+        );
+      }
       result.identifier.gtin = /\/01\/(\d+)\//.exec(matched.upi)?.[1] ?? result.identifier.gtin;
       result.identifier.tokenId = matched.tokenId;
       const seen = new Set<string>();
@@ -123,7 +137,9 @@ export async function verifyPassport(input: string, options: VerifyOptions = {})
       if (d) authoritative.push({ domain: d, source: 'caller' });
       else result.notes.push(`"${options.issuerDomain}" is not a website domain, so it was not used.`);
     }
-    if (parsed.kind === 'upi' && isBrandHost(parsed.host) && !authoritative.some((a) => a.domain === parsed.host)) {
+    // The identifier's host speaks for the brand only when it was part of the hashed identifier.
+    const hostWasHashed = result.identifier.form === 'as-written';
+    if (parsed.kind === 'upi' && hostWasHashed && isBrandHost(parsed.host) && !authoritative.some((a) => a.domain === parsed.host)) {
       authoritative.push({ domain: parsed.host, source: 'identifier-host' });
     }
     const authoritativeChecks = await Promise.all(authoritative.map((a) => readDeclaration(client, a.domain, a.source)));
@@ -181,6 +197,22 @@ export async function verifyPassport(input: string, options: VerifyOptions = {})
         result.record = null;
         result.evidence = live.flatMap((c) => evidenceFor(client, c, result.identifier.tokenId!, null));
         return finish('issuer-mismatch', { declaringDomain: null });
+      }
+    }
+
+    // A mapped link's host is reported, never relied on: anyone can put a brand's GS1 key in a link
+    // on their own domain, and publish a declaration there naming any account.
+    if (parsed.kind === 'upi' && !hostWasHashed && parsed.link && !authoritative.some((a) => a.domain === parsed.host)) {
+      const check = judgeDeclaration(await readDeclaration(client, parsed.host, 'link-host'), chosen.owner);
+      result.declarations.push(check);
+      if (check.result === 'confirms') {
+        result.notes.push(
+          `${parsed.host}, the host of the link given, also declares the issuer account as its own. Its host was not part of the identifier checked, so this does not confirm the brand; pass it as issuerDomain if you know it to be the brand's website.`,
+        );
+      } else if (check.result === 'contradicts') {
+        result.notes.push(
+          `${parsed.host}, the host of the link given, declares a different account (${check.declaredAccount}) from the issuer of this record. Its host was not part of the identifier checked, so this does not change the answer, but the link's host is not the issuer.`,
+        );
       }
     }
 
