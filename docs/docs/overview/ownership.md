@@ -15,6 +15,31 @@ An item's passport is a token, and whoever holds the token owns the passport. Ow
 
 Both steps use the stock LSP8 functions, with the identifier carried in the standard `data` argument. Any LUKSO wallet that can call `authorizeOperator` and `transfer` can take part, provided it supplies the identifier.
 
+## In the console
+
+On the hosted platform, each leg is one screen and one signature. The full walk-through, from connecting with a partner to the passport changing hands, is [Hand passports to a partner](/walkthrough/partners).
+
+**Leg 1, from the holder's side.** **Sign the hand-over** signs `authorizeOperator` for each passport offered, in batches of up to 10. Nothing moves, and the screen says so.
+
+<figure>
+  <img src="/screenshots/v3/partners/transfer-sign-handover.png" alt="The holder's view of a passport transfer: waiting for them to accept, nothing has moved and the passport is still yours; your half of the hand-over, with Sign the hand-over (1 passport) and Withdraw what has not been handed over; PROD-HB24-000001 marked Offered." />
+  <figcaption>The holder's half. Withdrawing sends <code>revokeOperator</code>. Demo organisation.</figcaption>
+</figure>
+
+**Leg 2, from the receiver's side.** **Accept** signs `transfer` with the same identifier, and the token moves. The screen repeats the caveat below: signing is not proof that the goods have arrived.
+
+<figure>
+  <img src="/screenshots/v3/partners/accept-offer.png" alt="The receiver's view: your turn, items are waiting for you; a warning that signing is not by itself proof that the goods have arrived; Take 1 passport with an Accept 1 passport button; PROD-HB24-000001 marked Hand-over started." />
+  <figcaption>The receiver's half, before it signs. Demo organisation.</figcaption>
+</figure>
+
+**Afterwards.** The new holder is whatever `tokenOwnerOf(tokenId)` returns. The console reads it from the collection rather than recording it itself.
+
+<figure>
+  <img src="/screenshots/v3/partners/passport-after.png" alt="These passports are yours: all 1 are now owned by your organisation, confirmed by reading the chain rather than by anyone saying so. PROD-HB24-000001 marked Handed over." />
+  <figcaption>The hand-over complete, confirmed by reading the chain. Demo organisation.</figcaption>
+</figure>
+
 ## What is refused
 
 - **A direct push.** If the holder calls `transfer` itself, the call reverts with `UG_DirectTransferRefused_OfferWithAuthorizeOperator`. The error's name carries the remedy.
