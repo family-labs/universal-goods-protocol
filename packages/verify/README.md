@@ -158,7 +158,7 @@ bun run test        # fixtures: a fake ledger, explorer and web, no network
 bun run test:live   # the same paths against LUKSO mainnet
 ```
 
-The live tests read real mainnet tokens: a test item the Universal Goods hosted platform issued under `ugpdpp.org` (verified from its identifier, from a scanned link carrying a "verify" address, and from a GS1 element string), a test item of a fictional brand read by collection and token ID, the never-issued next serial (no record), a product-level identifier (invalid), and an endpoint that does not answer (unreachable).
+The live tests read real mainnet tokens issued under `ugpdpp.org`: a test item of the Universal Goods hosted platform (verified from its identifier, from a scanned link carrying a "verify" address, and from a GS1 element string), a test item of a fictional brand (verified from its printed identifier and by collection and token ID), a never-issued serial and a never-issued GTIN (no record), a product-level identifier (invalid), and an endpoint that does not answer (unreachable).
 
 ## Licence
 

@@ -5,8 +5,9 @@ import { verifyPassport } from '../src/verify.js';
  * Against LUKSO mainnet itself, through its public endpoints. Off by default so the ordinary test
  * run never depends on the network: `UG_VERIFY_LIVE=1 bun run test:live`.
  *
- * The items are real mainnet tokens: a test item the Universal Goods hosted platform issued under
- * the protocol's resolver host, and a test item of a fictional brand, read by collection and token ID.
+ * The items are real mainnet tokens issued under the protocol's resolver host: a test item of the
+ * Universal Goods hosted platform, and a test item of a fictional brand, read both from its printed
+ * identifier and by collection and token ID.
  */
 const live = process.env.UG_VERIFY_LIVE === '1';
 
@@ -42,6 +43,20 @@ describe.runIf(live)('live: LUKSO mainnet', () => {
     const r = await verifyPassport('(01)02039492840945(21)000001');
     expect(r.status).toBe('verified');
     expect(r.identifier.upi).toBe(PLATFORM_ITEM);
+  });
+
+  it('verified: a fictional brand item from its printed identifier', async () => {
+    const r = await verifyPassport('https://ugpdpp.org/01/09520606000019/21/000001');
+    expect(r.status).toBe('verified');
+    expect(r.record?.collection).toBe('0x53dd29800CA12767dBA5712D67Ff2A82bF252fdD');
+    expect(r.identifier.tokenId).toBe('0x17694e6da0154f9ceea8bc938b189a1aaa4dfd5a74bed86fc374ed71bb022a0e');
+    expect(r.issuer?.account).toBe(FICTIONAL_BRAND_ACCOUNT);
+    expect(r.issuer?.profileName).toBe('Oskvale');
+  });
+
+  it('no-record: a fictional brand GTIN that was never issued', async () => {
+    const r = await verifyPassport('https://ugpdpp.org/01/09520606000040/21/000001');
+    expect(r.status).toBe('no-record');
   });
 
   it('verified: a fictional brand item read by collection and token ID', async () => {
