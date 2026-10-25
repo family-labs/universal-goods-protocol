@@ -1,0 +1,402 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://universalgoods.org/schemas/marketplace/v1/listing.schema.json",
+  "title": "Universal Goods marketplace listing",
+  "description": "One item for sale on the Universal Goods marketplace, as the open public read service publishes it. It never carries the seller's personal data or the item's printed code.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "title",
+    "brand",
+    "category",
+    "condition",
+    "conditionLabel",
+    "description",
+    "price",
+    "shipping",
+    "brandResaleSharePercent",
+    "seller",
+    "image",
+    "photos",
+    "passport",
+    "available",
+    "publishedAt",
+    "updatedAt",
+    "links"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "The listing's id."
+    },
+    "title": {
+      "type": "string",
+      "description": "The product's name, as its brand published it."
+    },
+    "brand": {
+      "type": "object",
+      "description": "The organisation that issued the item's passport.",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "name",
+        "verifiedBrand"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "The brand's id, for filtering."
+        },
+        "name": {
+          "type": "string"
+        },
+        "verifiedBrand": {
+          "const": true,
+          "description": "Always true: the passport, and so the brand name, was issued by this brand's own Universal Goods account. The seller cannot set or change the brand."
+        }
+      }
+    },
+    "category": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "slug",
+            "title",
+            "parent"
+          ],
+          "properties": {
+            "slug": {
+              "type": "string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "parent": {
+              "oneOf": [
+                {
+                  "type": "null"
+                },
+                {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "slug",
+                    "title"
+                  ],
+                  "properties": {
+                    "slug": {
+                      "type": "string"
+                    },
+                    "title": {
+                      "type": "string"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "condition": {
+      "type": "string",
+      "enum": [
+        "new_with_tags",
+        "excellent",
+        "good",
+        "fair"
+      ]
+    },
+    "conditionLabel": {
+      "type": "string"
+    },
+    "description": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "The seller's own words about the item."
+    },
+    "price": {
+      "type": "object",
+      "description": "Australian dollars. No token prices.",
+      "additionalProperties": false,
+      "required": [
+        "amountCents",
+        "currency",
+        "formatted",
+        "includesBuyerFee",
+        "buyerFeeCents",
+        "buyerFeePercent"
+      ],
+      "properties": {
+        "amountCents": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "What a buyer pays for the item, in cents, buyer fee included. Shipping is extra."
+        },
+        "currency": {
+          "const": "AUD"
+        },
+        "formatted": {
+          "type": "string",
+          "examples": [
+            "A$659.20"
+          ]
+        },
+        "includesBuyerFee": {
+          "const": true
+        },
+        "buyerFeeCents": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "buyerFeePercent": {
+          "type": "number",
+          "minimum": 0
+        }
+      }
+    },
+    "shipping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "pricing",
+        "shipsFrom"
+      ],
+      "properties": {
+        "pricing": {
+          "const": "quoted_at_checkout",
+          "description": "Shipping is quoted at checkout from where it ships to the buyer's address."
+        },
+        "shipsFrom": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "city",
+            "country"
+          ],
+          "properties": {
+            "city": {
+              "type": "string",
+              "description": "Town or city only, never a street address."
+            },
+            "country": {
+              "type": "string",
+              "pattern": "^[A-Z]{2}$"
+            }
+          }
+        }
+      }
+    },
+    "brandResaleSharePercent": {
+      "type": "number",
+      "minimum": 0,
+      "description": "The brand's share of the seller's price on this sale (0 while the brand has no payouts)."
+    },
+    "seller": {
+      "type": "object",
+      "description": "Who is selling. No name, contact or address is ever published.",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "properties": {
+        "kind": {
+          "const": "private_person"
+        }
+      }
+    },
+    "image": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "uri",
+      "description": "The product's picture, as its brand published it."
+    },
+    "photos": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      },
+      "description": "The seller's photos, served by this API."
+    },
+    "passport": {
+      "type": "object",
+      "description": "Where to check the item's passport yourself: call tokenOwnerOf(tokenId) on collectionAddress at chainId.",
+      "additionalProperties": false,
+      "required": [
+        "chainId",
+        "network",
+        "standard",
+        "collectionAddress",
+        "tokenId",
+        "passportUrl",
+        "verificationUrl",
+        "explorerUrl",
+        "publicRpc",
+        "sync"
+      ],
+      "properties": {
+        "chainId": {
+          "type": "integer",
+          "description": "The chain the passport lives on (4201 = LUKSO testnet)."
+        },
+        "network": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "standard": {
+          "const": "LSP8"
+        },
+        "collectionAddress": {
+          "type": "string",
+          "pattern": "^0x[0-9a-f]{40}$"
+        },
+        "tokenId": {
+          "type": "string",
+          "pattern": "^0x[0-9a-f]{64}$"
+        },
+        "passportUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri",
+          "description": "The public passport of the item's model (JSON)."
+        },
+        "verificationUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri",
+          "description": "The public verifier for that passport."
+        },
+        "explorerUrl": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "publicRpc": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uri"
+        },
+        "sync": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "state",
+            "meaning",
+            "checkedAt"
+          ],
+          "properties": {
+            "state": {
+              "type": "string",
+              "enum": [
+                "synced",
+                "changed",
+                "not_synced",
+                "unavailable"
+              ]
+            },
+            "meaning": {
+              "type": "string"
+            },
+            "checkedAt": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        }
+      }
+    },
+    "ownerCheck": {
+      "type": "object",
+      "description": "Single-listing reads only: what the chain said, just now, about who holds the passport.",
+      "additionalProperties": false,
+      "required": [
+        "state",
+        "checkedAt",
+        "source"
+      ],
+      "properties": {
+        "state": {
+          "type": "string",
+          "enum": [
+            "seller_owns",
+            "owner_changed",
+            "unknown"
+          ]
+        },
+        "checkedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "source": {
+          "const": "chain"
+        }
+      }
+    },
+    "available": {
+      "type": "boolean"
+    },
+    "publishedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "links": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "self",
+        "page",
+        "jsonLd"
+      ],
+      "properties": {
+        "self": {
+          "type": "string",
+          "format": "uri"
+        },
+        "page": {
+          "type": "string",
+          "format": "uri"
+        },
+        "jsonLd": {
+          "type": "string",
+          "format": "uri"
+        }
+      }
+    }
+  }
+}

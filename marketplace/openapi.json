@@ -1,0 +1,1176 @@
+{
+  "openapi": "3.1.0",
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "info": {
+    "title": "Universal Goods marketplace: open public read API",
+    "version": "1.0.0",
+    "summary": "Read-only, free and open: the items for sale on the Universal Goods marketplace.",
+    "description": "Anyone can read the listings that are for sale, with no account and no API key: people, search engines and AI agents. Each listing links to its digital product passport and to the chain, so you can check the passport and who holds it yourself. Prices are in Australian dollars and include the 3% buyer fee; shipping is quoted at checkout. The API never publishes the seller's personal data or the item's printed code. Reads are rate limited per address (60 a minute and 1,200 an hour for listings; photos have their own, larger allowance). Buying, payments and orders are a separate, private service operated by Family Labs Pty Ltd and are not part of this API.",
+    "license": {
+      "name": "Apache-2.0",
+      "identifier": "Apache-2.0"
+    },
+    "contact": {
+      "name": "Family Labs Pty Ltd",
+      "url": "https://universalgoods.org"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://api.universalgoods.xyz/api/marketplace/v1/public",
+      "description": "TESTNET ONLY: LUKSO testnet (chain 4201), payments in Stripe test mode. Nothing here is really for sale."
+    }
+  ],
+  "paths": {
+    "/listings": {
+      "get": {
+        "operationId": "searchListings",
+        "summary": "Search and filter the listings for sale",
+        "description": "Newest first unless `sort` says otherwise. Page with `nextCursor`.",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Words to look for in the listing's title, brand, category and the seller's description (at most 100 characters). It never matches an item's code, serial number or token id.",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "brand",
+            "in": "query",
+            "required": false,
+            "description": "A brand's id (`brand.id` in a listing).",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "A category slug (`category.slug`, or its parent's slug).",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "condition",
+            "in": "query",
+            "required": false,
+            "description": "One or more conditions, comma separated.",
+            "schema": {
+              "type": "string",
+              "pattern": "^(new_with_tags|excellent|good|fair)(,(new_with_tags|excellent|good|fair))*$"
+            }
+          },
+          {
+            "name": "minPriceCents",
+            "in": "query",
+            "required": false,
+            "description": "The lowest price a buyer pays, in cents, buyer fee included.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "maxPriceCents",
+            "in": "query",
+            "required": false,
+            "description": "The highest price a buyer pays, in cents, buyer fee included.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "shipsFrom",
+            "in": "query",
+            "required": false,
+            "description": "The country it ships from, ISO 3166-1 alpha-2 (for example AU).",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z]{2}$"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "`newest` (default), `price_asc` or `price_desc`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "newest",
+                "price_asc",
+                "price_desc"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Listings per page, 1 to 50 (default 24).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "description": "The `nextCursor` of the previous page. Opaque; pass it back unchanged with the same filters and sort.",
+            "schema": {
+              "type": "string",
+              "maxLength": 400
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of listings.",
+            "headers": {
+              "Cache-Control": {
+                "description": "How long the answer may be cached.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "ETag": {
+                "description": "A validator; send it back as If-None-Match for a 304.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A parameter was not understood.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The marketplace is not open here.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many reads from your address. Wait for Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/listings/{id}": {
+      "get": {
+        "operationId": "getListing",
+        "summary": "One listing, with a fresh on-chain owner check",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The listing.",
+            "headers": {
+              "Cache-Control": {
+                "description": "How long the answer may be cached.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "ETag": {
+                "description": "A validator; send it back as If-None-Match for a 304.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Listing"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No listing with that id is for sale.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many reads from your address. Wait for Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/listings/{id}/jsonld": {
+      "get": {
+        "operationId": "getListingJsonLd",
+        "summary": "The listing as schema.org JSON-LD (Product and Offer)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "schema.org Product with an Offer.",
+            "headers": {
+              "Cache-Control": {
+                "description": "How long the answer may be cached.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "ETag": {
+                "description": "A validator; send it back as If-None-Match for a 304.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/ld+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/JsonLdProduct"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No listing with that id is for sale.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many reads from your address. Wait for Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/listings/{id}/photos/{photoId}": {
+      "get": {
+        "operationId": "getListingPhoto",
+        "summary": "One of the seller's photos (JPEG, location data removed)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "photoId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The photo.",
+            "headers": {
+              "Cache-Control": {
+                "description": "How long the answer may be cached.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "image/jpeg": {
+                "schema": {
+                  "type": "string",
+                  "contentMediaType": "image/jpeg"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such photo on a listing that is for sale.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many reads from your address. Wait for Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/brands/{brandId}/listings": {
+      "get": {
+        "operationId": "listBrandListings",
+        "summary": "A brand's listings",
+        "parameters": [
+          {
+            "name": "brandId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "description": "Words to look for in the listing's title, brand, category and the seller's description (at most 100 characters). It never matches an item's code, serial number or token id.",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "category",
+            "in": "query",
+            "required": false,
+            "description": "A category slug (`category.slug`, or its parent's slug).",
+            "schema": {
+              "type": "string",
+              "maxLength": 100
+            }
+          },
+          {
+            "name": "condition",
+            "in": "query",
+            "required": false,
+            "description": "One or more conditions, comma separated.",
+            "schema": {
+              "type": "string",
+              "pattern": "^(new_with_tags|excellent|good|fair)(,(new_with_tags|excellent|good|fair))*$"
+            }
+          },
+          {
+            "name": "minPriceCents",
+            "in": "query",
+            "required": false,
+            "description": "The lowest price a buyer pays, in cents, buyer fee included.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "maxPriceCents",
+            "in": "query",
+            "required": false,
+            "description": "The highest price a buyer pays, in cents, buyer fee included.",
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          {
+            "name": "shipsFrom",
+            "in": "query",
+            "required": false,
+            "description": "The country it ships from, ISO 3166-1 alpha-2 (for example AU).",
+            "schema": {
+              "type": "string",
+              "pattern": "^[A-Za-z]{2}$"
+            }
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "description": "`newest` (default), `price_asc` or `price_desc`.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "newest",
+                "price_asc",
+                "price_desc"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "Listings per page, 1 to 50 (default 24).",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50
+            }
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "description": "The `nextCursor` of the previous page. Opaque; pass it back unchanged with the same filters and sort.",
+            "schema": {
+              "type": "string",
+              "maxLength": 400
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A page of listings.",
+            "headers": {
+              "Cache-Control": {
+                "description": "How long the answer may be cached.",
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "ETag": {
+                "description": "A validator; send it back as If-None-Match for a 304.",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListingPage"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "A parameter was not understood.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No such brand.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many reads from your address. Wait for Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sitemap.xml": {
+      "get": {
+        "operationId": "getSitemap",
+        "summary": "A sitemap of every listing's public page",
+        "responses": {
+          "200": {
+            "description": "sitemaps.org XML.",
+            "content": {
+              "application/xml": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too many reads from your address. Wait for Retry-After seconds.",
+            "headers": {
+              "Retry-After": {
+                "schema": {
+                  "type": "integer"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/openapi.json": {
+      "get": {
+        "operationId": "getOpenApi",
+        "summary": "This document",
+        "responses": {
+          "200": {
+            "description": "OpenAPI 3.1.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/listing.schema.json": {
+      "get": {
+        "operationId": "getListingSchema",
+        "summary": "The listing object's JSON Schema",
+        "responses": {
+          "200": {
+            "description": "JSON Schema 2020-12.",
+            "content": {
+              "application/schema+json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Listing": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "$id": "https://universalgoods.org/schemas/marketplace/v1/listing.schema.json",
+        "title": "Universal Goods marketplace listing",
+        "description": "One item for sale on the Universal Goods marketplace, as the open public read service publishes it. It never carries the seller's personal data or the item's printed code.",
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "title",
+          "brand",
+          "category",
+          "condition",
+          "conditionLabel",
+          "description",
+          "price",
+          "shipping",
+          "brandResaleSharePercent",
+          "seller",
+          "image",
+          "photos",
+          "passport",
+          "available",
+          "publishedAt",
+          "updatedAt",
+          "links"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "The listing's id."
+          },
+          "title": {
+            "type": "string",
+            "description": "The product's name, as its brand published it."
+          },
+          "brand": {
+            "type": "object",
+            "description": "The organisation that issued the item's passport.",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "name",
+              "verifiedBrand"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "The brand's id, for filtering."
+              },
+              "name": {
+                "type": "string"
+              },
+              "verifiedBrand": {
+                "const": true,
+                "description": "Always true: the passport, and so the brand name, was issued by this brand's own Universal Goods account. The seller cannot set or change the brand."
+              }
+            }
+          },
+          "category": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "slug",
+                  "title",
+                  "parent"
+                ],
+                "properties": {
+                  "slug": {
+                    "type": "string"
+                  },
+                  "title": {
+                    "type": "string"
+                  },
+                  "parent": {
+                    "oneOf": [
+                      {
+                        "type": "null"
+                      },
+                      {
+                        "type": "object",
+                        "additionalProperties": false,
+                        "required": [
+                          "slug",
+                          "title"
+                        ],
+                        "properties": {
+                          "slug": {
+                            "type": "string"
+                          },
+                          "title": {
+                            "type": "string"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            ]
+          },
+          "condition": {
+            "type": "string",
+            "enum": [
+              "new_with_tags",
+              "excellent",
+              "good",
+              "fair"
+            ]
+          },
+          "conditionLabel": {
+            "type": "string"
+          },
+          "description": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "The seller's own words about the item."
+          },
+          "price": {
+            "type": "object",
+            "description": "Australian dollars. No token prices.",
+            "additionalProperties": false,
+            "required": [
+              "amountCents",
+              "currency",
+              "formatted",
+              "includesBuyerFee",
+              "buyerFeeCents",
+              "buyerFeePercent"
+            ],
+            "properties": {
+              "amountCents": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "What a buyer pays for the item, in cents, buyer fee included. Shipping is extra."
+              },
+              "currency": {
+                "const": "AUD"
+              },
+              "formatted": {
+                "type": "string",
+                "examples": [
+                  "A$659.20"
+                ]
+              },
+              "includesBuyerFee": {
+                "const": true
+              },
+              "buyerFeeCents": {
+                "type": "integer",
+                "minimum": 0
+              },
+              "buyerFeePercent": {
+                "type": "number",
+                "minimum": 0
+              }
+            }
+          },
+          "shipping": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pricing",
+              "shipsFrom"
+            ],
+            "properties": {
+              "pricing": {
+                "const": "quoted_at_checkout",
+                "description": "Shipping is quoted at checkout from where it ships to the buyer's address."
+              },
+              "shipsFrom": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "city",
+                  "country"
+                ],
+                "properties": {
+                  "city": {
+                    "type": "string",
+                    "description": "Town or city only, never a street address."
+                  },
+                  "country": {
+                    "type": "string",
+                    "pattern": "^[A-Z]{2}$"
+                  }
+                }
+              }
+            }
+          },
+          "brandResaleSharePercent": {
+            "type": "number",
+            "minimum": 0,
+            "description": "The brand's share of the seller's price on this sale (0 while the brand has no payouts)."
+          },
+          "seller": {
+            "type": "object",
+            "description": "Who is selling. No name, contact or address is ever published.",
+            "additionalProperties": false,
+            "required": [
+              "kind"
+            ],
+            "properties": {
+              "kind": {
+                "const": "private_person"
+              }
+            }
+          },
+          "image": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "format": "uri",
+            "description": "The product's picture, as its brand published it."
+          },
+          "photos": {
+            "type": "array",
+            "maxItems": 8,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "url"
+              ],
+              "properties": {
+                "url": {
+                  "type": "string",
+                  "format": "uri"
+                }
+              }
+            },
+            "description": "The seller's photos, served by this API."
+          },
+          "passport": {
+            "type": "object",
+            "description": "Where to check the item's passport yourself: call tokenOwnerOf(tokenId) on collectionAddress at chainId.",
+            "additionalProperties": false,
+            "required": [
+              "chainId",
+              "network",
+              "standard",
+              "collectionAddress",
+              "tokenId",
+              "passportUrl",
+              "verificationUrl",
+              "explorerUrl",
+              "publicRpc",
+              "sync"
+            ],
+            "properties": {
+              "chainId": {
+                "type": "integer",
+                "description": "The chain the passport lives on (4201 = LUKSO testnet)."
+              },
+              "network": {
+                "type": [
+                  "string",
+                  "null"
+                ]
+              },
+              "standard": {
+                "const": "LSP8"
+              },
+              "collectionAddress": {
+                "type": "string",
+                "pattern": "^0x[0-9a-f]{40}$"
+              },
+              "tokenId": {
+                "type": "string",
+                "pattern": "^0x[0-9a-f]{64}$"
+              },
+              "passportUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uri",
+                "description": "The public passport of the item's model (JSON)."
+              },
+              "verificationUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uri",
+                "description": "The public verifier for that passport."
+              },
+              "explorerUrl": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uri"
+              },
+              "publicRpc": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "format": "uri"
+              },
+              "sync": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "state",
+                  "meaning",
+                  "checkedAt"
+                ],
+                "properties": {
+                  "state": {
+                    "type": "string",
+                    "enum": [
+                      "synced",
+                      "changed",
+                      "not_synced",
+                      "unavailable"
+                    ]
+                  },
+                  "meaning": {
+                    "type": "string"
+                  },
+                  "checkedAt": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                }
+              }
+            }
+          },
+          "ownerCheck": {
+            "type": "object",
+            "description": "Single-listing reads only: what the chain said, just now, about who holds the passport.",
+            "additionalProperties": false,
+            "required": [
+              "state",
+              "checkedAt",
+              "source"
+            ],
+            "properties": {
+              "state": {
+                "type": "string",
+                "enum": [
+                  "seller_owns",
+                  "owner_changed",
+                  "unknown"
+                ]
+              },
+              "checkedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "source": {
+                "const": "chain"
+              }
+            }
+          },
+          "available": {
+            "type": "boolean"
+          },
+          "publishedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "links": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "self",
+              "page",
+              "jsonLd"
+            ],
+            "properties": {
+              "self": {
+                "type": "string",
+                "format": "uri"
+              },
+              "page": {
+                "type": "string",
+                "format": "uri"
+              },
+              "jsonLd": {
+                "type": "string",
+                "format": "uri"
+              }
+            }
+          }
+        }
+      },
+      "ListingPage": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "listings",
+          "total",
+          "nextCursor"
+        ],
+        "properties": {
+          "listings": {
+            "type": "array",
+            "maxItems": 50,
+            "items": {
+              "$ref": "#/components/schemas/Listing"
+            }
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "description": "How many listings match, across all pages."
+          },
+          "nextCursor": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "description": "Pass as `cursor` for the next page; null on the last page."
+          }
+        }
+      },
+      "JsonLdProduct": {
+        "type": "object",
+        "required": [
+          "@context",
+          "@type",
+          "name",
+          "brand",
+          "offers"
+        ],
+        "properties": {
+          "@context": {
+            "const": "https://schema.org"
+          },
+          "@type": {
+            "const": "Product"
+          },
+          "name": {
+            "type": "string"
+          },
+          "brand": {
+            "type": "object",
+            "required": [
+              "@type",
+              "name"
+            ]
+          },
+          "offers": {
+            "type": "object",
+            "required": [
+              "@type",
+              "price",
+              "priceCurrency",
+              "availability",
+              "itemCondition"
+            ],
+            "properties": {
+              "@type": {
+                "const": "Offer"
+              },
+              "price": {
+                "type": "string",
+                "pattern": "^\\d+\\.\\d{2}$"
+              },
+              "priceCurrency": {
+                "const": "AUD"
+              },
+              "availability": {
+                "enum": [
+                  "https://schema.org/InStock",
+                  "https://schema.org/OutOfStock"
+                ]
+              },
+              "itemCondition": {
+                "enum": [
+                  "https://schema.org/NewCondition",
+                  "https://schema.org/UsedCondition"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "message"
+        ],
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}
