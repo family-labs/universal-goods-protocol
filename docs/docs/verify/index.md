@@ -72,7 +72,7 @@ What counts as a source you already trust:
 
 What does not count: a link, a domain, an explorer address or a "verification service" named on the page you are checking, in the QR code's extra parameters, or in a message from the seller. You may read those, but treat them as more claims, not as the check.
 
-The identifier's own host is part of the hashed identifier, so a fake that prints a different host names a different token. That is why you start from the identifier, not from the page around it.
+The identifier's own host is part of the hashed identifier, so a fake that prints a different host names a different token. That is why you start from the identifier, not from the page around it. When you look a link up by its GTIN and serial instead (step 3), its host is no longer part of the check, and it carries no weight at all.
 
 ## The steps
 
@@ -97,11 +97,13 @@ Ask a public LUKSO endpoint for the token's **mint**: the LSP8 `Transfer` event 
 
 If more than one collection minted the same token ID, at most one of them can be the brand's. Step 4 tells them apart.
 
+**A link on another host.** A brand may link to its passports from its own website, for example `https://brand.example/01/{gtin}/21/{serial}`, while the item was recorded under the protocol's resolver host. Under GS1 Digital Link both name the same item: the GTIN and serial are the identity, and the host only says where to look it up. So if the link has no record as written, look up the same GTIN and serial under `https://ugpdpp.org/01/{gtin}/21/{serial}`, with the GTIN as written and as 13 or 14 digits. Say which form you found. The link's host was then not part of what you checked, so it tells you nothing about who the brand is.
+
 ### 4. Read the issuer, its declared account and its website
 
 - The collection's `owner()` is the **issuer account**: only the owner can mint, and only to itself.
 - The issuer's **declared website** comes from one of two places, in this order of strength:
-  1. a **domain declaration**, a JSON file the brand publishes on its own website at `/.well-known/product-passports.json`, naming its account and collections. Read it from the brand's real website, which you know independently, or from the identifier's host when the identifier uses the brand's own domain. See [Mark up a product page](./product-page-markup#publish-a-domain-declaration);
+  1. a **domain declaration**, a JSON file the brand publishes on its own website at `/.well-known/product-passports.json`, naming its account and collections. Read it from the brand's real website, which you know independently, or from the identifier's host when the record was found under that exact identifier, host included. See [Mark up a product page](./product-page-markup#publish-a-domain-declaration);
   2. the issuer account's own **profile** (LSP3 metadata), which may list a website. This is the issuer describing itself, so on its own it is weaker.
 - If the brand's declaration names a different account from the collection's owner, the record was not issued by the brand.
 
