@@ -25,5 +25,6 @@ its own licence:
   https://github.com/ethereum-lists/chains.
 
 Solidity and TypeScript dependencies installed by package managers (LUKSO LSP
-contracts, ERC725, OpenZeppelin, ethers, viem and others) are not redistributed
-in this repository and remain under their own licences.
+contracts, ERC725, OpenZeppelin, ethers, viem, the Model Context Protocol SDK, zod
+and others) are not redistributed in this repository and remain under their own
+licences.

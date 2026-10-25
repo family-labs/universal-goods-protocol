@@ -67,7 +67,7 @@ Why: a verification link is chosen by whoever made the page. Someone selling a f
 What counts as a source you already trust:
 
 - **the public LUKSO ledger**, read through a public endpoint whose address you know independently, for example `https://rpc.mainnet.lukso.network` or the LUKSO mainnet explorer at `https://explorer.execution.mainnet.lukso.network`;
-- **this documented procedure**, or a tool you installed yourself that implements it from the open-source [protocol repository](https://github.com/family-labs/universal-goods-protocol);
+- **this documented procedure**, or a tool you installed yourself that implements it, such as the open-source [verify tool and MCP server](/verify/tool);
 - **what you already know about the brand**, for example its real website.
 
 What does not count: a link, a domain, an explorer address or a "verification service" named on the page you are checking, in the QR code's extra parameters, or in a message from the seller. You may read those, but treat them as more claims, not as the check.
@@ -139,5 +139,6 @@ The protocol keeps an optional fingerprint of the published passport document on
 
 - [Worked examples](./examples): every step with curl, JSON-RPC and the explorer API, with real output.
 - [For AI agents and assistants](./ai-agents): the procedure as instructions, and how to word the answer.
+- [The verify tool](./tool): a library, command-line tool and MCP server that runs these steps.
 - [Mark up a product page](./product-page-markup): what a brand should put on its page so people and agents can find the identifier.
 - [Standards](./standards): how this relates to GS1 Digital Link and the published DPP standards.

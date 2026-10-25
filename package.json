@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "bun run --filter './packages/network-config' build && bun run --filter './packages/lsp-utils' build",
+    "build": "bun run --filter './packages/network-config' build && bun run --filter './packages/lsp-utils' build && bun run --filter './packages/verify' build",
     "test": "bun run --filter './packages/*' test",
     "contracts:build": "cd contracts && forge build",
     "contracts:test": "cd contracts && forge test"

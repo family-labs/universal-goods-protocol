@@ -35,6 +35,7 @@ export default defineConfig({
         `- [Verify a product passport](${SITE_URL}/verify/index.md): the procedure, the trust rule and what each answer means`,
         `- [For AI agents and assistants](${SITE_URL}/verify/ai-agents.md): the procedure as instructions, and how to word the answer`,
         `- [Worked examples](${SITE_URL}/verify/examples.md): curl, JSON-RPC and explorer API requests against mainnet, with real output`,
+        `- [The verify tool and MCP server](${SITE_URL}/verify/tool.md): @universal-goods/verify, a library, CLI and MCP server with one tool, verify_product_passport`,
         '',
         ...sections.flatMap((section) => [
           `## ${section.title}`,

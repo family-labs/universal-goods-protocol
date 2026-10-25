@@ -4,7 +4,7 @@ The Universal Goods Protocol is open infrastructure that gives every physical pr
 
 It runs on [LUKSO](https://lukso.network). Each product line is an LSP8 collection and each physical item is a token in it. The token's ID is derived from the identifier printed on the item, so anyone holding the product can work out which token it is with no lookup and no API call. Organisations and people hold Universal Profiles, controlled by passkeys through LSP6 permissions and recoverable through LSP11 social recovery. Brands write a fingerprint of each published passport to their own profile, and a relayer pays the network fees so nobody needs to hold LYX to take part.
 
-This repository holds the rails other people can build on: the Solidity contracts, their test suite, and two small TypeScript packages for the on-chain encoding and the deployed addresses.
+This repository holds the rails other people can build on: the Solidity contracts, their test suite, two small TypeScript packages for the on-chain encoding and the deployed addresses, and a passport verifier that AI agents can call.
 
 - Live testnet app: https://app.universalgoods.xyz
 - Public passports (testnet): https://ugpdpp.xyz
@@ -15,6 +15,8 @@ This repository holds the rails other people can build on: the Solidity contract
 A product passport claim is checked against the public record, from a source you already trust, never through a "verify here" link supplied by the product page or the seller. Take the identifier printed on the item, `https://{host}/01/{gtin}/21/{serial}`, hash it with keccak256 to get the token ID, find its mint on LUKSO mainnet (chain 42) through a public endpoint you chose, and compare the collection's owner (the issuer) and `tokenOwnerOf(tokenId)` (the holder) with the account the brand declares.
 
 The full procedure, what each answer means, guidance for AI agents and assistants, and the recommended product-page markup are at https://docs.universalgoods.org/verify/ (source in [`docs/docs/verify/`](docs/docs/verify/)). An index for language models is at https://docs.universalgoods.org/llms.txt.
+
+[`packages/verify`](packages/verify/) does all of this for you: a TypeScript library, a `ug-verify` command and an MCP server with one tool, `verify_product_passport`, so any AI agent can check a passport claim against the ledger with one call.
 
 ## How the pieces fit
 
@@ -72,6 +74,7 @@ contracts/                 Foundry project
 packages/
   lsp-utils/               UPI tokenId derivation, LSP3 metadata, LSP6 permissions, LSP11 recovery
   network-config/          Chain definitions, RPC endpoint handling, deployed contract addresses
+  verify/                  Passport verifier: library, `ug-verify` CLI and MCP server (`verify_product_passport`)
 docs/                      Documentation site (Rspress) for docs.universalgoods.org
 .github/workflows/ci.yml   Build and test on every push and pull request
 ```
@@ -97,9 +100,11 @@ The P-256 fallback library cannot compile under `via_ir`, so `foundry.toml` buil
 
 ```sh
 bun install
-bun run build   # network-config first, then lsp-utils
+bun run build   # network-config first, then lsp-utils, then verify
 bun run test
 ```
+
+`bun run --filter './packages/verify' test:live` runs the verifier's tests against LUKSO mainnet.
 
 ## Deployed contracts
 

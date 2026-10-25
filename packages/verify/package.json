@@ -1,0 +1,43 @@
+{
+  "name": "@universal-goods/verify",
+  "version": "0.1.0",
+  "description": "Check a product passport claim against the public LUKSO ledger, from the identifier printed on the item: a library, a CLI and an MCP server for AI agents.",
+  "license": "Apache-2.0",
+  "private": false,
+  "type": "module",
+  "sideEffects": false,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "bin": {
+    "ug-verify": "dist/cli.js",
+    "ug-verify-mcp": "dist/mcp.js"
+  },
+  "files": ["dist", "README.md"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "test:live": "UG_VERIFY_LIVE=1 vitest run tests/live.test.ts"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.1",
+    "@universal-goods/lsp-utils": "workspace:*",
+    "@universal-goods/network-config": "workspace:*",
+    "ethers": "^6.6.0",
+    "viem": "^2.43.3",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.6.0"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
