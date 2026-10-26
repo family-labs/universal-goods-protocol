@@ -8,10 +8,12 @@
 
 Open **Products** and choose **New product**. The **Basics** step takes an image, the name, the category, the GTIN and a description. The category decides which data the passport asks for: for a battery, choose the specific type (EV, LMT, stationary or industrial battery) rather than the general **Battery** group.
 
-<div class="todo-shot">
-  <strong>Screenshot to retake: the Basics step</strong>
-  The existing capture shows the category set to the general Battery group, while the text tells readers to choose a specific battery type. Retake it with Industrial battery selected.
-</div>
+<figure>
+  <img src="/screenshots/v3/product/basics-industrial.png" alt="The Create New Product page on step 1, Basics. Name HB-24 Industrial Battery Pack, category Industrial battery, GTIN 2012345000018 and a description ending Demo record, not a real product. The optional product image is empty. A side panel explains products, How to Transfer and the next step." />
+  <figcaption>The Basics step with a specific battery type, Industrial battery, selected. The image is optional and left empty here. Demo organisation.</figcaption>
+</figure>
+
+The **How to Transfer** note beside the form is a reminder of what this product commits you to: every item made under it gets its own identifier, printed on the item, and its passport changes hands only when both sides supply that identifier. See [How ownership moves](/overview/ownership).
 
 On **Variants**, add an option such as Capacity and one row per variant, each with its own SKU and its own GTIN.
 

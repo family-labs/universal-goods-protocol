@@ -2,7 +2,7 @@
 
 This section follows one product from start to finish in the hosted console at [app.universalgoods.xyz](https://app.universalgoods.xyz) (LUKSO testnet), and at each step shows which part of the protocol is doing the work underneath.
 
-The screenshots show a fictional demo organisation, **Halden Battery Works (demo)**, a demo person, **Alex Demo**, and a demo product, the **HB-24 Industrial Battery Pack**. None of them is real. The captures were taken on testnet, which has since been reset, so the demo records no longer exist there.
+The screenshots show a fictional demo organisation, **Halden Battery Works (demo)**, a demo person, **Alex Demo**, and a demo product, the **HB-24 Industrial Battery Pack**. Steps 3 and 7 add a second demo organisation, **Nordvik Recycling (demo)**, as the supplier and the receiving partner. None of them is real. The earlier captures were taken on testnet, which has since been reset, so the demo records no longer exist there; the later ones were taken on a local copy of the same console, against a local chain. Addresses and transaction hashes in them do not exist on testnet.
 
 ## The steps at a glance
 

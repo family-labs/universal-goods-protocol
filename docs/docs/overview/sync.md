@@ -47,10 +47,26 @@ The product header in the hosted console shows a **Sync** pill. Amber means ther
   <figcaption>An amber Sync pill: this product has changes that are not yet published to the profile. Demo organisation on testnet.</figcaption>
 </figure>
 
-<div class="todo-shot">
-  <strong>Screenshot to take: the green Sync pill</strong>
-  The product header after a successful publish, with the pill green, and the signing window it opens. Capture on the demo organisation.
-</div>
+Pressing the amber pill publishes the passport as it stands and opens a signing page with one step, **Sync passport data**: record the hash of this product's published data on your organisation's profile. That step is the `setData` call. Your key approves it; the hosted platform's relayer sends it and pays the network fee.
+
+<figure>
+  <img src="/screenshots/v3/sync/sync-signing.png" alt="The Confirm Transaction page. On the left, Sync passport data, Pending Signature, with one step: record the hash of this product's published data on your organisation's profile. On the right, Authorize Use with the browser-held key selected, a note that Universal Goods sends the transaction and pays the network fee, a passphrase field, and Confirm and Send." />
+  <figcaption>Signing a Sync. One step, one signature from your own key. Demo organisation.</figcaption>
+</figure>
+
+<figure>
+  <img src="/screenshots/v3/sync/sync-confirmed.png" alt="The same page after signing: Sync passport data marked sent, and Confirmed on chain, the network mined this transaction and accepted it, with the confirmed transaction hash and a Back to Product button." />
+  <figcaption>Confirmed on chain: the fingerprint is now on the profile. Demo organisation.</figcaption>
+</figure>
+
+Back on the product, the pill turns green.
+
+<figure>
+  <img src="/screenshots/v3/sync/sync-green.png" alt="The Attributes tab of HB-24 Industrial Battery Pack with a green Sync pill beside the product name, above the Battery information, Material composition and document sections." />
+  <figcaption>A green Sync pill: the published data matches the record on the organisation's profile. Demo organisation.</figcaption>
+</figure>
+
+Any accepted change to the passport turns the pill amber again, including answers accepted from a supplier, so publishing is a step you repeat whenever the data changes.
 
 ## Check it yourself
 

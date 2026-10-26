@@ -6,7 +6,7 @@
 
 ## Publish: Sync
 
-The product header carries a **Sync** pill. Amber means there are changes that are not yet published, or the profile does not hold the current fingerprint. Pressing it issues a credential for the passport as it stands and asks you to sign a `setData` on your profile that stores its SHA-256 fingerprint.
+The product header carries a **Sync** pill. Amber means there are changes that are not yet published, or the profile does not hold the current fingerprint. Pressing it issues a credential for the passport as it stands and asks you to sign a `setData` on your profile that stores its SHA-256 fingerprint. Green means the two match. [Sync](/overview/sync) shows each state and the signing step.
 
 ## Share
 
@@ -31,14 +31,14 @@ The **Share** button on any product, batch or item opens a panel with a public p
 Scanning an item opens its public passport in a browser, with no app and no account. Public sections show their values. On a battery passport, sections reserved for other audiences are named and marked **Restricted**, and **Request data** asks your organisation for access.
 
 <figure>
+  <img src="/screenshots/v3/share/public-passport-top.png" width="440" alt="The top of the demo product's public passport: the Universal Goods mark, the HB-24 battery image, the name HB-24 Industrial Battery Pack with a green check, the issuer Halden Battery Works (demo), then the Battery Identification section with 5 present and Material Composition with 1 present, and a Share button." />
+  <figcaption>The top of a public passport: the product, the organisation that issued it, then its public sections with a count of the values present. Demo organisation.</figcaption>
+</figure>
+
+<figure>
   <img src="/screenshots/v3/share/restricted-and-request.png" width="448" alt="Sections of the demo battery passport: Battery information and Material composition with values present, then Safety and documentation, Test reports, Battery history and State of health marked Restricted, and a Request data button." />
   <figcaption>Restricted sections are named, not hidden. Demo organisation on testnet.</figcaption>
 </figure>
-
-<div class="todo-shot">
-  <strong>Screenshot to retake: the top of the public passport</strong>
-  The product image, name, issuing organisation and description. The earlier captures included decorative product renders behind the page, so they are not used here; retake with a plain background.
-</div>
 
 A shared link opens the verification page instead. It shows whether the credential checked out, which organisation issued it, its expiry, and the disclosed sections.
 
