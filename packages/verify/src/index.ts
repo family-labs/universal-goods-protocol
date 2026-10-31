@@ -1,0 +1,10 @@
+export { verifyPassport } from './verify.js';
+export { parseInput } from './identifier.js';
+export type { ParsedInput, UpiInput, TokenReferenceInput, InvalidInput } from './identifier.js';
+export { NETWORKS, SHARED_RESOLVER_HOSTS } from './networks.js';
+export type { Network } from './networks.js';
+export { TRUST_RULE, writeVerdict } from './verdict.js';
+export { createFetchHandler } from './http.js';
+export type { FetchHandlerOptions } from './http.js';
+export { TOOL_NAME, TOOL_DESCRIPTION, createServer } from './mcp-server.js';
+export * from './types.js';

@@ -2,6 +2,7 @@
   { "type": "file", "name": "index", "label": "Verify a product passport" },
   { "type": "file", "name": "examples", "label": "Worked examples" },
   { "type": "file", "name": "ai-agents", "label": "For AI agents and assistants" },
+  { "type": "file", "name": "tool", "label": "The verify tool and MCP server" },
   { "type": "file", "name": "product-page-markup", "label": "Mark up a product page" },
   { "type": "file", "name": "standards", "label": "Standards" }
 ]
