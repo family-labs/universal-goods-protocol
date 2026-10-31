@@ -71,10 +71,18 @@ describe.runIf(live)('live: LUKSO mainnet', () => {
     expect(r.status).toBe('verified');
   });
 
-  it('no-record: an unknown GTIN on the brand domain', async () => {
+  it('not-on-protocol: an unknown GTIN on the brand domain, with no protocol declaration there', async () => {
     const r = await verifyPassport('https://oskvale.com/01/09520606000040/21/000001');
-    expect(r.status).toBe('no-record');
+    // The study site serves no declaration while it is closed; when it serves one naming its
+    // account on chain 42, the domain claims protocol issuance and the answer becomes no-record.
+    const declares = r.declarations.some((d) => d.source === 'link-host' && d.declaredAccount !== null);
+    expect(r.status).toBe(declares ? 'no-record' : 'not-on-protocol');
     console.log(r.verdict);
+  });
+
+  it('not-on-protocol: a GTIN on an unrelated host', async () => {
+    const r = await verifyPassport('https://passportrecord.org/01/09520606000040/21/000001');
+    expect(r.status).toBe('not-on-protocol');
   });
 
   it('invalid-identifier: a key buried in a lookalike path', async () => {

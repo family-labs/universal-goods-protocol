@@ -8,7 +8,12 @@
  * - `issuer-mismatch`: a record exists, but not from the account the brand declares, or several
  *   collections claim the identifier and nothing shows which is the brand's. Anyone can mint the
  *   hash of any identifier into a collection of their own, so this must never read as verified.
- * - `no-record`: the ledger holds no record for this identifier.
+ * - `no-record`: the identifier claims to be on this protocol (it is on the protocol's resolver
+ *   host, it is a ledger reference, or the domain behind it declares that it issues passports on
+ *   this protocol) and the ledger holds no record for it. Evidence against the passport claim.
+ * - `not-on-protocol`: a GS1 identifier that makes no claim to be on this protocol, with no record
+ *   either as written or under its GS1 key. Its passport, if it has one, was issued some other way.
+ *   Neutral: this says nothing about whether that passport is genuine.
  * - `unreachable`: the ledger could not be read. No conclusion either way.
  * - `invalid-identifier`: the input is not an item-level identifier, so there is nothing to check.
  */
@@ -17,6 +22,7 @@ export type VerifyStatus =
   | 'held-by-other'
   | 'issuer-mismatch'
   | 'no-record'
+  | 'not-on-protocol'
   | 'unreachable'
   | 'invalid-identifier';
 

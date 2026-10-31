@@ -52,7 +52,7 @@ Add `--json` for the full result, and `--issuer-domain brand.example` when you a
 
 | Field | What it is |
 |---|---|
-| `status` | `verified`, `held-by-other`, `issuer-mismatch`, `no-record`, `unreachable` or `invalid-identifier`, as defined on [Verify a product passport](/verify/#what-each-answer-means) |
+| `status` | `verified`, `held-by-other`, `issuer-mismatch`, `no-record`, `not-on-protocol`, `unreachable` or `invalid-identifier`, as defined on [Verify a product passport](/verify/#what-each-answer-means) |
 | `verdict` | One sentence that states the answer and names the issuer, safe to repeat as written |
 | `identifier` | The identifier as hashed, its GTIN and serial, and the token ID |
 | `network` | `LUKSO mainnet`, chain ID 42 (or testnet, 4201) |

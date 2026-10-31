@@ -139,7 +139,7 @@ describe('verifyPassport', () => {
     expect(r.verdict).toMatch(/^2 different accounts/);
   });
 
-  it('no-record: nothing on the ledger was ever minted with this token ID', async () => {
+  it('no-record: an identifier on the protocol resolver host with nothing on the ledger', async () => {
     const { r } = await run(UPI, { collections: [genuine(BRAND, keccak256(toUtf8Bytes('something else')))] });
     expect(r.status).toBe('no-record');
     expect(r.record).toBeNull();
@@ -283,11 +283,46 @@ describe('verifyPassport: a link on the brand domain or any other host', () => {
     expect(r.issuer?.declaration).toMatchObject({ source: 'identifier-host', result: 'confirms' });
   });
 
-  it('no-record: an unknown GTIN on the brand domain, checked both ways', async () => {
+  it('not-on-protocol: an unknown GTIN on another host is neutral, never "unsupported"', async () => {
     const { r } = await run('https://brand.example/01/09520606000040/21/000001', { collections: [minted()] });
+    expect(r.status).toBe('not-on-protocol');
+    expect(r.verdict).toContain('was not issued through the Universal Goods protocol');
+    expect(r.verdict).toContain('does not mean it is not genuine');
+    expect(r.verdict).toContain('(also checked as "https://ugpdpp.org/01/09520606000040/21/000001")');
+    expect(r.verdict).not.toMatch(/unsupported|fake/);
+    expect(r.declarations).toContainEqual(expect.objectContaining({ source: 'link-host', result: 'not-found' }));
+  });
+
+  it("no-record: the link's own domain declares it issues on this protocol, yet there is no record", async () => {
+    const { r } = await run('https://brand.example/01/09520606000040/21/000001', {
+      collections: [minted()],
+      web: { [DECLARATION_URL]: declaration({ account: BRAND }) },
+    });
     expect(r.status).toBe('no-record');
     expect(r.verdict).toContain('either as written or under its GS1 key');
-    expect(r.verdict).toContain('https://ugpdpp.org/01/09520606000040/21/000001');
+    expect(r.notes.join(' ')).toContain('brand.example declares that it issues passports on LUKSO mainnet');
+  });
+
+  it('no-record: the brand website the caller names declares it issues on this protocol', async () => {
+    const { r } = await run(
+      'https://passport-record.example/01/09520606000040/21/000001',
+      { collections: [minted()], web: { [DECLARATION_URL]: declaration({ account: BRAND }) } },
+      { issuerDomain: 'brand.example' },
+    );
+    expect(r.status).toBe('no-record');
+  });
+
+  it('not-on-protocol: a declaration for another network does not make it a protocol claim', async () => {
+    const { r } = await run('https://brand.example/01/09520606000040/21/000001', {
+      collections: [minted()],
+      web: { [DECLARATION_URL]: declaration({ account: BRAND, chainId: 4201 }) },
+    });
+    expect(r.status).toBe('not-on-protocol');
+  });
+
+  it('not-on-protocol: a GS1 element string makes no claim about the protocol either', async () => {
+    const { r } = await run('(01)09520606000040(21)000001', { collections: [minted()] });
+    expect(r.status).toBe('not-on-protocol');
   });
 
   it('invalid-identifier: a key buried in another path', async () => {
@@ -326,6 +361,7 @@ describe('MCP server', () => {
     const { tools } = await client.listTools();
     const tool = tools.find((t) => t.name === TOOL_NAME)!;
     expect(tool.description).toContain('Digital Product Passport');
+    expect(tool.description).toContain('"not-on-protocol" is neutral');
     expect(Object.keys(tool.inputSchema.properties ?? {}).sort()).toEqual(['input', 'issuerDomain', 'network']);
     expect(tool.annotations?.readOnlyHint).toBe(true);
 

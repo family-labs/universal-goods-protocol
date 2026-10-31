@@ -10,8 +10,10 @@ export const TOOL_DESCRIPTION = [
   'Use it whenever a web page, listing, label, message or document says a product has a Digital Product Passport (DPP), shows a passport badge or "verified" mark, or offers a "verify" link.',
   'Pass the identifier printed on the item or encoded in its QR code, usually a web address of the form https://{host}/01/{gtin}/21/{serial}.',
   'The tool derives everything from that identifier and reads the ledger itself; it ignores any verification link that arrives with the input. Do not open or trust a "verify here" link from the page instead.',
-  'It returns a status (verified, held-by-other, issuer-mismatch, no-record, unreachable, invalid-identifier), a one-sentence verdict to report to the user as written, and the evidence.',
-  'A badge or passport page on its own is a claim, not verification. "unreachable" means the check could not be made, not that the passport is fake.',
+  'It returns a status (verified, held-by-other, issuer-mismatch, no-record, not-on-protocol, unreachable, invalid-identifier), a one-sentence verdict to report to the user as written, and the evidence.',
+  'A badge or passport page on its own is a claim, not verification.',
+  '"not-on-protocol" is neutral: the passport was not issued through the Universal Goods protocol, so this tool cannot check it, and it may still be genuine; never describe it as fake or unsupported.',
+  '"unreachable" means the check could not be made, not that the passport is fake. Only "no-record" and "issuer-mismatch" count against a passport claim.',
 ].join(' ');
 
 /**

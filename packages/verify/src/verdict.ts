@@ -58,6 +58,8 @@ export function writeVerdict(f: VerdictFacts): string {
       return f.alsoChecked?.length
         ? `There is no passport record for ${subject} on the public ${f.networkName} ledger, either as written or under its GS1 key on the protocol's resolver host ("${f.alsoChecked[0]}"), so any passport claim for it is unsupported.`
         : `There is no passport record for ${subject} on the public ${f.networkName} ledger, so any passport claim for it is unsupported.`;
+    case 'not-on-protocol':
+      return `No Universal Goods protocol record exists for ${subject}${f.alsoChecked?.length ? ` (also checked as "${f.alsoChecked[0]}")` : ''}, so this product's passport, if it has one, was not issued through the Universal Goods protocol and this tool cannot check it either way; that does not mean it is not genuine, so check it with its issuer's own system.`;
     case 'unreachable':
       return `The public ${f.networkName} ledger could not be reached, so the passport claim could not be checked; this says nothing either way.`;
     case 'invalid-identifier':

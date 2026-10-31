@@ -14,7 +14,8 @@ the item, for example:
 --network        mainnet (default) or testnet
 --json           print the full result as JSON
 
-Exit code: 0 verified, 1 any other completed check, 2 ledger unreachable, 3 invalid input.
+Exit code: 0 verified, 1 any other completed check (including not-on-protocol), 2 ledger
+unreachable, 3 invalid input.
 Environment: UG_VERIFY_RPC_URL, UG_VERIFY_EXPLORER_URL to use your own endpoints.`;
 
 const args = process.argv.slice(2);

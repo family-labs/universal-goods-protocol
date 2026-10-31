@@ -54,7 +54,7 @@ The token ID is `keccak256` of the identifier's exact characters, computed by `i
 
 ```jsonc
 {
-  "status": "verified",          // verified | held-by-other | issuer-mismatch | no-record | unreachable | invalid-identifier
+  "status": "verified",          // verified | held-by-other | issuer-mismatch | no-record | not-on-protocol | unreachable | invalid-identifier
   "verdict": "Verified: …",      // one sentence, safe to repeat to a user as written
   "identifier": { "input": "…", "kind": "upi", "upi": "https://ugpdpp.org/01/2039492840945/21/000001",
                   "gtin": "2039492840945", "serial": "000001", "tokenId": "0xd4cca9a2…" },
@@ -86,7 +86,8 @@ The token ID is `keccak256` of the identifier's exact characters, computed by `i
 | `verified` | A record exists for exactly this identifier, issued by the issuer account, and that account still holds it. Check `issuer.confirmed` and the verdict for who the issuer is. |
 | `held-by-other` | The record exists, but another account holds it now. The item may have been resold. |
 | `issuer-mismatch` | A record exists, but not from the account the brand's domain declares, or several collections claim this identifier and nothing shows which is the brand's. |
-| `no-record` | The ledger holds no record for this identifier. |
+| `no-record` | The identifier claims to be on this protocol (it is on the protocol resolver host, it is a ledger reference, or a domain behind it declares that it issues passports here) and the ledger holds no record for it. Evidence against the passport claim. |
+| `not-on-protocol` | A GS1 identifier that makes no claim to be on this protocol, with no record as written or under its GS1 key. Its passport, if any, was issued some other way: neutral, says nothing about whether it is genuine. Check it with its issuer's own system. |
 | `unreachable` | The ledger could not be read. No conclusion either way. |
 | `invalid-identifier` | Not an item-level identifier. Nothing to look up, and no request is made. |
 

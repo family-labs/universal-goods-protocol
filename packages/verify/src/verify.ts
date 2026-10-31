@@ -1,5 +1,5 @@
 import { sameAddress } from '@universal-goods/network-config';
-import { isBrandHost, parseInput, type ParsedInput } from './identifier.js';
+import { isBrandHost, parseInput, type ParsedInput, type UpiInput } from './identifier.js';
 import { isUsableDeclaration, judgeDeclaration, readDeclaration, readIssuerProfile, toDomain, type IssuerProfile } from './issuer.js';
 import { findMints, LedgerUnreachable, readCollection, type LedgerClient } from './ledger.js';
 import { NETWORKS, networkForChainId, type Network } from './networks.js';
@@ -64,7 +64,7 @@ export async function verifyPassport(input: string, options: VerifyOptions = {})
       candidateCount: result.candidates.length,
       mappedFrom: result.identifier.form === 'gs1-key-on-protocol-resolver' ? result.identifier.link : null,
       alsoChecked:
-        status === 'no-record' && parsed.ok && parsed.kind === 'upi' && parsed.link
+        (status === 'no-record' || status === 'not-on-protocol') && parsed.ok && parsed.kind === 'upi' && parsed.link
           ? parsed.upis.filter((u) => u.form !== 'as-written').map((u) => u.upi)
           : [],
       ...extra,
@@ -90,7 +90,7 @@ export async function verifyPassport(input: string, options: VerifyOptions = {})
     let found: { collection: string; tokenId: string; mintTransaction: string | null }[];
     if (parsed.kind === 'upi') {
       const { logs } = await findMints(client, parsed.upis.map((u) => u.tokenId));
-      if (logs.length === 0) return finish('no-record');
+      if (logs.length === 0) return finish(await absentStatus(client, parsed, options, result));
       // Preference follows `parsed.upis`: the input as written beats its GS1 key on the resolver host.
       const matched = parsed.upis.find((u) => logs.some((l) => l.tokenId === u.tokenId.toLowerCase())) ?? parsed.upis[0];
       result.identifier.upi = matched.upi;
@@ -248,6 +248,46 @@ export async function verifyPassport(input: string, options: VerifyOptions = {})
     }
     throw err;
   }
+}
+
+/**
+ * Nothing on the ledger for any form of the identifier. Whether that counts against the passport
+ * depends on whether the identifier claimed to be on this protocol in the first place:
+ *
+ *  - on the protocol's resolver host, as written: it did, so a missing record is `no-record`;
+ *  - a GS1 Digital Link on another host, or a bare GS1 element string: it did not. A genuine
+ *    passport issued by another provider looks exactly like this, so the answer is the neutral
+ *    `not-on-protocol`, unless a domain behind it (one the caller named, or the link's own host)
+ *    declares that it issues passports on this protocol and network, in which case the missing
+ *    record contradicts that domain's own claim and is `no-record`.
+ */
+async function absentStatus(
+  client: LedgerClient,
+  parsed: UpiInput,
+  options: VerifyOptions,
+  result: VerifyResult,
+): Promise<'no-record' | 'not-on-protocol'> {
+  const onProtocolResolver = !isBrandHost(parsed.host) && parsed.upis.some((u) => u.form === 'as-written');
+  if (onProtocolResolver) return 'no-record';
+
+  const domains: { domain: string; source: DeclarationCheck['source'] }[] = [];
+  const caller = options.issuerDomain ? toDomain(options.issuerDomain) : null;
+  if (caller) domains.push({ domain: caller, source: 'caller' });
+  if (parsed.link && isBrandHost(parsed.host) && parsed.host !== caller) domains.push({ domain: parsed.host, source: 'link-host' });
+
+  const checks = await Promise.all(domains.map((d) => readDeclaration(client, d.domain, d.source)));
+  result.declarations.push(...checks);
+  const claimant = checks.find(isUsableDeclaration);
+  if (claimant) {
+    result.notes.push(
+      `${claimant.domain} declares that it issues passports on ${client.network.name} (account ${claimant.declaredAccount}), yet the ledger holds no record for this item.`,
+    );
+    return 'no-record';
+  }
+  result.notes.push(
+    'This identifier makes no claim to be on the Universal Goods protocol, and nothing on the ledger says it should be. A missing record here is not evidence against the passport.',
+  );
+  return 'not-on-protocol';
 }
 
 function chooseNetwork(parsed: ParsedInput, options: VerifyOptions): Network {
