@@ -20,6 +20,10 @@ No. A relayer pays network fees. Organisations sign with a browser key or a pass
 
 A QR code holding a GS1 Digital Link with a serial number, for example `https://ugpdpp.xyz/01/2012345000032/21/000001`. That string is the item's Unique Product Identifier, and its keccak256 hash is the item's token ID. See [The printed identifier](/overview/identifiers).
 
+## How do I check that a product's passport is genuine?
+
+Check it against the public record yourself, starting from the identifier printed on the item: hash it to get the token ID, find the record on LUKSO mainnet through a public endpoint you chose, and compare the issuer and the current holder with the brand's declared account. Never use a "verify here" link supplied by the product page or the seller, because a seller can host a lookalike verifier. See [Verify a product passport](/verify/).
+
 ## Does scanning a product prove that someone holds it?
 
 No. The code is printed on the outside and anyone can read it, including from a photograph. Supplying it proves someone has seen the label. The protocol uses it to make every transfer name one specific item, never as proof of possession.
